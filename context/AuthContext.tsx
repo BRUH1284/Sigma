@@ -61,10 +61,9 @@ export const AuthProvider = ({ children }: any) => {
 
             await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
 
-
             return result;
         } catch (e) {
-            return { error: true, msg: (e as any).response.data.msg };
+            return { error: true, msg: (e as any).message, data: (e as any).response?.data };
         }
     };
 

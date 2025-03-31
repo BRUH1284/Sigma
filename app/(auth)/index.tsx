@@ -7,7 +7,7 @@ export default function Welcome() {
     return (
         <View style={styles.container}>
             <Text>Welcome</Text>
-            <TextButton label='Create an account' onPress={() => router.push("/registration")} />
+            <TextButton title='Create an account' onPress={() => router.push("/registration")} />
             <Link
                 href={"/login"}
                 style={{

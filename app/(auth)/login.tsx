@@ -1,87 +1,107 @@
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native'
+import { Image, View, Text, TextInput, Button, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
-import { COLORS } from '@/constants/theme'
-import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from 'expo-router';
+import TextButton from '@/components/TextButton';
+import { STYLES } from '@/constants/style';
+import TextField from '@/components/TextField';
 
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { onLogin } = useAuth();
     const router = useRouter();
+    const [errorMessage, setErrorMessage] = useState('');
+    const [usernameMessage, setUsernameMessage] = useState('');
+    const [passwordMessage, setPasswordMessage] = useState('');
 
-    // useEffect(() => {
-    //     const testCall = async () => {
-    //         try {
-    //             const result = await axios.get(`${API_URL}/activity`);
-    //             console.log('res:', result.status);
-    //         } catch (error) {
-    //             console.error('API Error:', error); // ✅ Logs full error object
-    //             if (axios.isAxiosError(error)) {
-    //                 console.error('Error Response:', error.response?.data); // ✅ Logs API error response
-    //             }
-    //         }
-    //     };
-    //     testCall();
-    // })
+    // Handle the change in username field
+    const handleUsernameChange = (newUsername: string) => {
+        setUsername(newUsername);
+        // Clear username and error message when the user starts typing
+        setUsernameMessage('');
+        setErrorMessage('');
+    };
 
+    // Handle the change in password field
+    const handlePasswordChange = (newPassword: string) => {
+        setPassword(newPassword);
+        // Clear password and error message when the user starts typing
+        setPasswordMessage('');
+        setErrorMessage('');
+    };
+
+    // Handle login process
     const login = async () => {
+        // Check if authentication service is available
         if (!onLogin) {
             alert("Authentication service is unavailable.");
             return;
         }
 
+        // Attempt to login with provided credentials
         const result = await onLogin(username, password);
 
-        if (result?.error) {
-            alert(result.msg);
+        // Handle login result
+        if (result.error) {
+            // Check for different types of error responses
+            if (result.data === undefined) {
+                alert(result.msg); // Show alert for undefined errors
+            }
+            if (result?.data.errors === undefined) {
+                setErrorMessage(result.data); // Set general error message
+                setPassword(''); // Clear password field
+            }
+            else {
+                // Set field-specific error messages if available
+                setUsernameMessage(result.data.errors.Username?.[0] ?? "");
+                setPasswordMessage(result.data.errors.Password?.[0] ?? "");
+                setErrorMessage(''); // Clear general error
+            }
         } else {
+            // On successful login, navigate to home screen
             router.replace("/(tabs)");
         }
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Sign in to Sigma</Text>
-            <TextInput
-                style={styles.input}
+
+        <View style={STYLES.container}>
+            <Image
+                style={{
+                    alignSelf: "stretch",
+                    height: 256,
+                    margin: 32
+                }}
+                resizeMode="contain"
+                source={{
+                    uri: 'https://i1.sndcdn.com/avatars-IOXJvmseuTNrYtVh-mxzoUg-t240x240.jpg',
+                }}></Image>
+            <Text style={STYLES.title}>Sign in to Sigma</Text>
+            <TextField
                 placeholder="Username"
+                errorMessage={usernameMessage}
                 autoCapitalize="none"
-                onChangeText={setUsername}
+                onChangeText={handleUsernameChange}
                 value={username}
             />
-            <TextInput
-                style={styles.input}
+            <TextField
                 placeholder="Password"
+                errorMessage={passwordMessage}
                 secureTextEntry
-                onChangeText={setPassword}
+                onChangeText={handlePasswordChange}
                 value={password}
             />
-            <Button onPress={login} title="Sign in" />
+            <View style={[STYLES.container, {
+                height: "auto",
+                alignSelf: "stretch",
+                justifyContent: 'flex-end',
+                marginBottom: 48
+            }]}>
+                <Text style={STYLES.errorText}>{errorMessage}</Text>
+                <TextButton onPress={login} title="Sign in" />
+            </View>
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 16
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginBottom: 20
-    },
-    input: {
-        width: "80%",
-        height: 40,
-        borderWidth: 1,
-        borderColor: COLORS.dark,
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        marginBottom: 10,
-    }
-});
 

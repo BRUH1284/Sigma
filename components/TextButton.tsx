@@ -1,14 +1,14 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { COLORS } from '@/constants/theme'
 import { STYLES } from '@/constants/style';
 
 type Props = {
-    label: string;
+    title: string;
     onPress?: () => void;
 }
 
-export default function TextButton({ label, onPress }: Props) {
+export default function TextButton({ title: title, onPress }: Props) {
     return (
         <TouchableOpacity
             style={[
@@ -19,8 +19,8 @@ export default function TextButton({ label, onPress }: Props) {
                 }]}
             onPress={onPress}
         >
-            <Text style={{ color: COLORS.light, fontWeight: 'bold' }}>
-                {label}
+            <Text style={{ color: COLORS.onPrimary, fontWeight: "bold" }}>
+                {title}
             </Text>
         </TouchableOpacity>
     )

@@ -8,9 +8,9 @@ export default function TabLayout() {
         <Tabs
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: COLORS.light,
+                tabBarActiveTintColor: COLORS.onPrimary,
                 tabBarStyle: {
-                    backgroundColor: COLORS.dark,
+                    backgroundColor: COLORS.onBackground,
                     borderTopRightRadius: 32,
                     borderTopLeftRadius: 32,
                     height: 64,

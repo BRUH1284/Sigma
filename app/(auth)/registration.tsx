@@ -11,21 +11,6 @@ export default function Register() {
     const { onRegister } = useAuth();
     const router = useRouter();
 
-    // useEffect(() => {
-    //     const testCall = async () => {
-    //         try {
-    //             const result = await axios.get(`${API_URL}/activity`);
-    //             console.log('res:', result.status);
-    //         } catch (error) {
-    //             console.error('API Error:', error); // ✅ Logs full error object
-    //             if (axios.isAxiosError(error)) {
-    //                 console.error('Error Response:', error.response?.data); // ✅ Logs API error response
-    //             }
-    //         }
-    //     };
-    //     testCall();
-    // })
-
     const register = async () => {
         if (!onRegister) {
             alert("Registration service is unavailable.");
