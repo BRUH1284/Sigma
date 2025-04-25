@@ -48,7 +48,7 @@ export default function Register() {
             return;
         }
 
-        const result = await onRegister(username, email, password);
+        const result = await onRegister(username, 'name', 'surname', email, password);
 
         // Handle registration result
         if (result?.error) {
