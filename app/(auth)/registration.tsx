@@ -1,7 +1,7 @@
 import { Image, View, Text, TextInput, Button, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
 import { COLORS } from '@/constants/theme'
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from 'expo-router';
 import TextField from '@/components/TextField';
 import TextButton from '@/components/TextButton';
@@ -48,10 +48,13 @@ export default function Register() {
             return;
         }
 
-        const result = await onRegister(username, 'name', 'surname', email, password);
+        const result = await onRegister(username, email, password);
 
         // Handle registration result
-        if (result?.error) {
+        if (result.success) {
+            // On successful registration, navigate to user info screen
+            //router.replace("../(userInfo)");
+        } else {
             // Check for different types of error responses
             if (result.data === undefined) {
                 alert(result.msg); // Show alert for undefined errors
@@ -72,9 +75,6 @@ export default function Register() {
                 setPasswordMessage(result.data.errors.Password?.[0] ?? "");
                 setErrorMessage(''); // Clear general error
             }
-        } else {
-            // On successful registration, navigate to welcome screen
-            router.replace("/(tabs)");
         }
     };
 

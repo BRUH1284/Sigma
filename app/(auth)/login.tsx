@@ -1,6 +1,6 @@
-import { Image, View, Text, TextInput, Button, StyleSheet } from 'react-native'
+import { Image, View, Text } from 'react-native'
 import React, { useState } from 'react'
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from 'expo-router';
 import TextButton from '@/components/TextButton';
 import { STYLES } from '@/constants/style';
@@ -43,7 +43,10 @@ export default function Login() {
         const result = await onLogin(username, password);
 
         // Handle login result
-        if (result.error) {
+        if (result.success) {
+            // On successful login, navigate to home screen
+            router.replace("/(tabs)");
+        } else {
             // Check for different types of error responses
             if (result.data === undefined) {
                 alert(result.msg); // Show alert for undefined errors
@@ -58,9 +61,6 @@ export default function Login() {
                 setPasswordMessage(result.data.errors.Password?.[0] ?? "");
                 setErrorMessage(''); // Clear general error
             }
-        } else {
-            // On successful login, navigate to home screen
-            router.replace("/(tabs)");
         }
     };
 

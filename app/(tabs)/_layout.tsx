@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { COLORS } from '@/constants/theme';
-import { AuthProvider } from '@/context/AuthContext';
 
 export default function TabLayout() {
     return (

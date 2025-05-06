@@ -1,7 +1,7 @@
 import TextButton from '@/components/TextButton'
 import { COLORS } from '@/constants/theme'
 import { Link, router } from 'expo-router'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 
 export default function Welcome() {
     return (
@@ -11,7 +11,7 @@ export default function Welcome() {
             <Link
                 href={"/login"}
                 style={{
-                    color: COLORS.dark,
+                    color: COLORS.onBackground,
                     textDecorationLine: "underline"
                 }}
             >

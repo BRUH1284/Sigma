@@ -43,9 +43,19 @@ export const STYLES = StyleSheet.create({
         borderWidth: 1,
         borderColor: COLORS.surface,
         elevation: 4,
-        borderRadius: 21,
+        borderRadius: 24,
         paddingHorizontal: 12,
         justifyContent: 'center',
-        height: 42,
+        height: 48,
+    },
+    dropDownWrapper: {
+        alignSelf: "stretch",
+        backgroundColor: COLORS.surface,
+        borderWidth: 1,
+        borderColor: COLORS.surface,
+        elevation: 4,
+        borderRadius: 24,
+        justifyContent: 'center',
+        height: 48,
     }
 });

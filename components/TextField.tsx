@@ -1,4 +1,4 @@
-import { TextInput, View, Text, StyleSheet } from 'react-native';
+import { TextInput, View, Text, StyleSheet, KeyboardTypeOptions } from 'react-native';
 import React from 'react';
 import { STYLES } from '@/constants/style';
 import { COLORS } from '@/constants/theme';
@@ -11,9 +11,19 @@ type Props = {
     autoCapitalize?: "none" | "sentences" | "words" | "characters";
     onChangeText?: (text: string) => void;
     value?: string;
+    keyboardType?: KeyboardTypeOptions;
 };
 
-const TextField: React.FC<Props> = ({ label, errorMessage = "", placeholder, secureTextEntry, autoCapitalize, onChangeText, value }) => {
+const TextField: React.FC<Props> = ({
+    label,
+    errorMessage = "",
+    placeholder,
+    secureTextEntry,
+    autoCapitalize,
+    onChangeText,
+    value,
+    keyboardType = "default"
+}) => {
     return (
         <View style={styles.container}>
             {label && <Text style={styles.text}>{label}</Text>}
@@ -30,6 +40,7 @@ const TextField: React.FC<Props> = ({ label, errorMessage = "", placeholder, sec
                     autoCapitalize={autoCapitalize}
                     onChangeText={onChangeText}
                     value={value}
+                    keyboardType={keyboardType}
                 />
             </View>
             <Text style={[
