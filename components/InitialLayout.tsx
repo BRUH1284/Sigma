@@ -28,5 +28,5 @@ export default function InitialLayout() {
         }
     }, [authState, registrationState]);
 
-    return <Stack screenOptions={{ headerShown: false }} />;
+    return <View />;
 }
