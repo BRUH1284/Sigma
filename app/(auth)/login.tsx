@@ -5,11 +5,13 @@ import { useRouter } from 'expo-router';
 import TextButton from '@/components/TextButton';
 import { STYLES } from '@/constants/style';
 import TextField from '@/components/TextField';
+import { useRegistration } from '@/hooks/useRegistration';
 
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { onLogin } = useAuth();
+    const { checkRegistration } = useRegistration();
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
     const [usernameMessage, setUsernameMessage] = useState('');
@@ -44,8 +46,7 @@ export default function Login() {
 
         // Handle login result
         if (result.success) {
-            // On successful login, navigate to home screen
-            router.replace("/(tabs)");
+            await checkRegistration();
         } else {
             // Check for different types of error responses
             if (result.data === undefined) {

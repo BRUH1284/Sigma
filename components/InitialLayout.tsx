@@ -19,11 +19,11 @@ export default function InitialLayout() {
         if (!authState?.authenticated && !inAuthScreen)
             router.replace("/(auth)");
         else if (authState?.authenticated) {
-            if (registrationState == null)
+            if (registrationState == null && !inAuthScreen)
                 router.replace("/(auth)");
             else if (registrationState.registered)
                 router.replace("/(tabs)");
-            else
+            else if (!registrationState.registered)
                 router.replace("/(userInfo)");
         }
     }, [authState, registrationState]);

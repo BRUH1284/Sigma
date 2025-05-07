@@ -76,7 +76,7 @@ export const authService = {
         return response;
     },
 
-    async refresh(deviceId: string) {
+    async refresh() {
         if (!refreshToken) throw new Error('No refresh token available');
 
         const response = await api.post('/auth/refresh-token', {
@@ -115,23 +115,27 @@ api.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
+
+        // Avoid infinite loop on refresh endpoint
         if (
-            error.response?.status === 401
-            && !originalRequest._retry
-            && error.response?.data != null
+            error.response?.status === 401 &&
+            !originalRequest._retry &&
+            !originalRequest.url.includes('/auth/refresh-token') &&
+            error.response?.data != null
         ) {
             originalRequest._retry = true;
+
             try {
-                const { accessToken, refreshToken } = await authService.refresh(deviceId);
-                await saveTokens(accessToken, refreshToken);
-                originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+                const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await authService.refresh();
+                await saveTokens(newAccessToken, newRefreshToken);
+                originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
                 return api(originalRequest);
             } catch (err) {
-                console.error("Refresh failed", err);
-                await authService.clearTokens();
+                console.log('Token refresh failed:', (err as any).message);
                 return Promise.reject(err);
             }
         }
+
         return Promise.reject(error);
     }
 );

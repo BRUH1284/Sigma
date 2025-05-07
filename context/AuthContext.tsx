@@ -1,5 +1,6 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { authService } from "@/services/authService";
+import { RegistrationContext } from "./RegistrationContext";
 
 export interface AuthResult {
     success: boolean;
@@ -73,15 +74,18 @@ export const AuthProvider = ({ children }: any) => {
         }
     };
 
+    const registrationContext = useContext(RegistrationContext);
+
     const login = async (username: string, password: string): Promise<AuthResult> => {
         try {
             const response = await authService.login(username, password);
 
             const { accessToken, refreshToken } = response.data;
 
+
             // Update auth state with actual tokens
             setAuthState({ accessToken, refreshToken, authenticated: true });
-
+            registrationContext.checkRegistration();
             return { success: true };
         } catch (e) {
             return {

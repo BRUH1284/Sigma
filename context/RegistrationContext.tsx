@@ -24,6 +24,7 @@ interface RegistrationContextProps {
     updateField: (field: keyof RegistrationData, value: any) => void;
     submitRegistration: () => Promise<{ success: boolean, msg?: string; data?: any }>;
     checkRegistration: () => Promise<boolean | null>;
+    clearRegistration: () => void;
 }
 
 interface RegistrationState {
@@ -35,7 +36,8 @@ export const RegistrationContext = createContext<RegistrationContextProps>({
     registrationState: { registered: false },
     updateField: () => { },
     submitRegistration: async () => ({ success: true, data: null }),
-    checkRegistration: async () => null
+    checkRegistration: async () => null,
+    clearRegistration: async () => null,
 });
 
 export const RegistrationProvider = ({ children }: any) => {
@@ -68,8 +70,13 @@ export const RegistrationProvider = ({ children }: any) => {
 
     const checkRegistration = async (): Promise<boolean | null> => {
         const isRegistered = await profileService.isRegistered();
+        //console.log(`check registration: ${isRegistered}`);
         setRegistrationState({ registered: isRegistered });
         return isRegistered;
+    };
+
+    const clearRegistration = async () => {
+        await profileService.clearRegistrationStatus();
     };
 
     return (
@@ -78,7 +85,8 @@ export const RegistrationProvider = ({ children }: any) => {
             registrationState,
             updateField,
             submitRegistration,
-            checkRegistration
+            checkRegistration,
+            clearRegistration
         }}>
             {children}
         </RegistrationContext.Provider>

@@ -1,6 +1,9 @@
 import { api } from '@/api/api';
+import { useProfile } from '@/hooks/useProfile';
+import { UserProfile } from '@/types/userTypes';
 import { RegistrationData } from '@/types/registrationTypes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserPost } from '@/types/postTypes';
 
 export const profileService = {
     async submitRegistration(data: RegistrationData) {
@@ -18,13 +21,55 @@ export const profileService = {
     },
 
     async isRegistered(): Promise<boolean | null> {
-        const isRegistered = await AsyncStorage.getItem('isRegistered') === 'true';
+        const isRegistered = await AsyncStorage.getItem('isRegistered');
 
         if (isRegistered != null)
-            return isRegistered;
+            return isRegistered === 'true';
 
-        const response = await api.get('/profiles/me/settings');
+        try {
+            const response = await api.get('/profiles/me/settings');
+            return response.data.weight ? response.data.weight != '0' : null;
+        } catch {
+            return null;
+        }
+    },
 
-        return response.data.weight ? response.data.weight === '0' : null;
+    async getMyProfile(): Promise<UserProfile> {
+        const response = await api.get('/profiles/me');
+
+        const profileData = response.data;
+
+        return {
+            userName: profileData.userName,
+            firstName: profileData.firstName,
+            lastName: profileData.lastName,
+            profilePictureUrl: profileData.profilePictureUrl,
+            bio: profileData.bio,
+            friendsVisible: profileData.userName === 'true',
+            friendCount: Number(profileData.friendCount),
+            followersCount: Number(profileData.followersCount),
+            followeeCount: Number(profileData.followeeCount),
+        }
+    },
+
+    async getMyPosts(): Promise<UserPost[]> {
+        const response = await api.get('/profiles/me/posts');
+
+        const postsData = response.data;
+
+        const posts: UserPost[] = postsData.map((post: any) => ({
+            id: post.id,
+            author: {
+                userName: post.author.userName,
+                firstName: post.author.firstName,
+                lastName: post.author.lastName,
+                profilePictureUrl: post.author.profilePictureUrl,
+            },
+            content: post.content,
+            imageUrls: post.imageUrls || [],
+            createdAt: new Date(post.createdAt),
+        }));
+
+        return posts;
     }
 };

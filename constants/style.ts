@@ -6,15 +6,21 @@ export const STYLES = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        gap: 8
+        gap: 16,
+        padding: 16,
     },
     title: {
         fontSize: 24,
         fontWeight: "bold",
-        marginBottom: 20
+        marginBottom: 20,
+        color: COLORS.onSurface
+    },
+    text: {
+        fontSize: 14,
+        color: COLORS.onSurface
     },
     errorText: {
-        fontSize: 12,
+        fontSize: 14,
         color: COLORS.danger
     },
     tabBarStyle: {
@@ -32,8 +38,8 @@ export const STYLES = StyleSheet.create({
     button: {
         backgroundColor: COLORS.primary,
         elevation: 4,
-        borderRadius: 21,
-        height: 42,
+        borderRadius: 24,
+        height: 48,
         alignItems: 'center',
         justifyContent: 'center'
     },

@@ -10,7 +10,6 @@ export default function RootLayout() {
       <RegistrationProvider>
         <SafeAreaProvider>
           <SafeAreaView style={{ flex: 1 }}>
-
             <Slot />
             <InitialLayout />
           </SafeAreaView>
