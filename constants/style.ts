@@ -8,6 +8,13 @@ export const STYLES = StyleSheet.create({
         justifyContent: "center",
         gap: 16,
         padding: 16,
+        backgroundColor: COLORS.surface
+    },
+    card: {
+        backgroundColor: COLORS.surface,
+        elevation: 4,
+        padding: 16,
+        borderRadius: 16
     },
     title: {
         fontSize: 24,

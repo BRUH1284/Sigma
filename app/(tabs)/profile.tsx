@@ -38,7 +38,7 @@ export default function MyProfile() {
 
     if (profileLoading && !refreshing) return <ActivityIndicator />;
 
-    if (error) alert(error);
+    if (error) return <Text>{error}</Text>;
     if (!profile) return <Text>No profile data</Text>;
 
     return (

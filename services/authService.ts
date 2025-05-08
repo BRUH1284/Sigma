@@ -2,7 +2,6 @@ import * as SecureStore from 'expo-secure-store';
 import * as Application from 'expo-application';
 import { api } from '@/api/api';
 import { profileService } from './profileService';
-import { useRegistration } from '@/hooks/useRegistration';
 
 const ACCESS_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_ACCESS_TOKEN_KEY!;
 const REFRESH_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_REFRESH_TOKEN_KEY!;
@@ -11,6 +10,14 @@ let deviceId: string = '';
 let accessToken: string | null = null;
 let refreshToken: string | null = null;
 
+type TokenUpdateListener = (tokens: { accessToken: string | null; refreshToken: string | null }) => void;
+
+const listeners = new Set<TokenUpdateListener>();
+
+// Notify all listeners when tokens change
+const notifyTokenUpdate = () => {
+    listeners.forEach(listener => listener({ accessToken, refreshToken }));
+};
 
 // Initialize device ID
 const initDeviceId = async (): Promise<void> => {
@@ -27,6 +34,7 @@ const setTokens = (newAccess: string | null, newRefresh: string | null) => {
     refreshToken = newRefresh;
     api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     //console.log(`new access token: ${accessToken} \n new refresh token: ${refreshToken}`);
+    notifyTokenUpdate(); // Notify listeners when tokens change
 };
 
 // Save tokens to secure store
@@ -51,6 +59,14 @@ const loadStoredTokens = async () => {
 };
 
 export const authService = {
+    subscribeToTokenUpdates: (listener: TokenUpdateListener) => {
+        listeners.add(listener);
+        // Immediately notify with current state
+        listener({ accessToken, refreshToken });
+        return () => listeners.delete(listener);
+    },
+
+
     async register(username: string, email: string, password: string) {
 
         const response = await api.post('/auth/register', {
@@ -126,12 +142,12 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await authService.refresh();
-                await saveTokens(newAccessToken, newRefreshToken);
+                const { accessToken: newAccessToken } = await authService.refresh();
                 originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
                 return api(originalRequest);
             } catch (err) {
                 console.log('Token refresh failed:', (err as any).message);
+                clearTokens();
                 return Promise.reject(err);
             }
         }

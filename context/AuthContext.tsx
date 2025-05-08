@@ -9,8 +9,6 @@ export interface AuthResult {
 }
 
 interface AuthState {
-    accessToken: string | null;
-    refreshToken: string | null;
     authenticated: boolean | null;
 }
 
@@ -23,46 +21,50 @@ interface AuthContextProps {
 
 export const AuthContext = createContext<AuthContextProps>({
     authState: {
-        accessToken: null,
-        refreshToken: null,
         authenticated: null
     }
 });
 
 export const AuthProvider = ({ children }: any) => {
     const [authState, setAuthState] = useState<{
-        accessToken: string | null;
-        refreshToken: string | null;
         authenticated: boolean | null
     }>({
-        accessToken: null,
-        refreshToken: null,
         authenticated: null
     });
 
     useEffect(() => {
         const initializeAuth = async () => {
-            const { accessToken, refreshToken } = await authService.loadStoredTokens();
-            if (accessToken)
-                setAuthState({ accessToken, refreshToken, authenticated: true });
-
+            const { accessToken } = await authService.loadStoredTokens();
+            const newAuthState = !!accessToken;
+            if (authState.authenticated != newAuthState)
+                setAuthState({
+                    authenticated: !!accessToken
+                });
         };
 
         initializeAuth();
-    }, []);
 
+        // Subscribe to token updates from authService
+        const unsubscribe = authService.subscribeToTokenUpdates(({ accessToken }) => {
+            const newAuthState = !!accessToken;
+            if (authState.authenticated != newAuthState)
+                setAuthState({
+                    authenticated: !!accessToken
+                });
+        });
+
+        // Return cleanup function that doesn't return anything
+        return () => {
+            unsubscribe();
+        };
+    }, []);
     const register = async (
         username: string,
         email: string,
         password: string
     ): Promise<AuthResult> => {
         try {
-            const response = await authService.register(username, email, password);
-
-            const { accessToken, refreshToken } = response.data;
-
-            // Update auth state with actual tokens
-            setAuthState({ accessToken, refreshToken, authenticated: true });
+            await authService.register(username, email, password);
 
             return { success: true };
         } catch (e) {
@@ -78,13 +80,8 @@ export const AuthProvider = ({ children }: any) => {
 
     const login = async (username: string, password: string): Promise<AuthResult> => {
         try {
-            const response = await authService.login(username, password);
+            await authService.login(username, password);
 
-            const { accessToken, refreshToken } = response.data;
-
-
-            // Update auth state with actual tokens
-            setAuthState({ accessToken, refreshToken, authenticated: true });
             registrationContext.checkRegistration();
             return { success: true };
         } catch (e) {
@@ -98,7 +95,6 @@ export const AuthProvider = ({ children }: any) => {
 
     const logout = async () => {
         await authService.logout();
-        setAuthState({ accessToken: null, refreshToken: null, authenticated: false });
     };
 
     const value = {
