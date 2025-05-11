@@ -11,12 +11,8 @@ import {
 import { getChats } from '@/services/messageService';
 import { useProfile } from '@/hooks/useProfile';
 import { useRouter } from 'expo-router';
-import {
-  connectToChatHub,
-  onMessageReceived,
-  stopConnection,
-} from '@/services/signalrService';
 import { authService } from '@/services/authService';
+import { useMessenger } from '@/hooks/userMessenger';
 
 type Chat = {
   username: string;
@@ -29,44 +25,42 @@ export default function MessengerScreen() {
   const [loading, setLoading] = useState(true);
 
   const { profile, profileLoading, fetchMyProfile } = useProfile();
+  const { connectToChatHub, onMessageReceived, stopConnection } = useMessenger();
   const router = useRouter();
 
   useEffect(() => {
-  const load = async () => {
-    try {
-      const token = authService.getAccessToken();
-      if (!token) {
-        console.error('⛔️ Токен не найден');
-        return;
+    const load = async () => {
+      try {
+        await fetchMyProfile(); // ⚠️ позже, не раньше токена
+
+        if (!profile?.userName) return;
+
+        await connectToChatHub();
+
+        const data = await getChats();
+        setChats(data); // временно без фильтра
+
+        onMessageReceived((sender: any, content: any, time: any) => {
+          console.log(`📩 Message from ${sender} at ${time}: ${content}`);
+          // You can also update your UI or store the message here
+        });
+        // onMessageReceived(async () => {
+        //   const updated = await getChats();
+        //   setChats(updated);
+        // });
+      } catch (err) {
+        console.error('❌ Ошибка:', err);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      await fetchMyProfile(); // ⚠️ позже, не раньше токена
+    load();
 
-      if (!profile?.userName) return;
-
-      console.log('🔐 Подключаюсь к SignalR с токеном:', token);
-      await connectToChatHub(profile.userName, token);
-
-      const data = await getChats();
-      setChats(data); // временно без фильтра
-
-      onMessageReceived(async () => {
-        const updated = await getChats();
-        setChats(updated);
-      });
-    } catch (err) {
-      console.error('❌ Ошибка:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  load();
-
-  return () => {
-    stopConnection();
-  };
-}, []);
+    return () => {
+      stopConnection();
+    };
+  }, []);
 
 
   const renderItem = ({ item: chat }: { item: Chat }) => (
@@ -74,7 +68,7 @@ export default function MessengerScreen() {
       style={styles.chatItem}
       onPress={() =>
         router.push({
-          pathname: '/(messenger)/[username]',
+          pathname: '/',
           params: { username: chat.username },
         })
       }
@@ -95,11 +89,14 @@ export default function MessengerScreen() {
   }
 
   return (
-    <FlatList
-      data={chats}
-      keyExtractor={(chat) => `${chat.username}-${chat.sentAt}`}
-      renderItem={renderItem}
-    />
+    <View style={styles.container}>
+
+      <FlatList
+        data={chats}
+        keyExtractor={(chat) => `${chat.username}-${chat.sentAt}`}
+        renderItem={renderItem}
+      />
+    </View>
   );
 }
 

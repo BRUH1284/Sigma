@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import * as Application from 'expo-application';
 import { api } from '@/api/api';
 import { AxiosError } from 'axios';
+import signalR from '@microsoft/signalr';
 
 const ACCESS_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_ACCESS_TOKEN_KEY!;
 const REFRESH_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_REFRESH_TOKEN_KEY!;
@@ -9,10 +10,12 @@ const REFRESH_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_REFRESH_TOKEN_KEY!;
 let deviceId: string = '';
 let accessToken: string | null = null;
 let refreshToken: string | null = null;
+let connection: signalR.HubConnection;
 
 type AuthListener = (authenticated: boolean | null) => void;
 
 const listeners = new Set<AuthListener>();
+
 
 // Notify all listeners when tokens change
 const notifyTokenUpdate = () => {
@@ -69,6 +72,31 @@ export const authService = {
         return () => listeners.delete(listener);
     },
 
+    async onMessageReceived(callback: (sender: string, content: string, time: string) => void) {
+        connection.on('ReceiveMessage', callback);
+    },
+
+    async stopConnection() {
+        if (connection) {
+            await connection.stop();
+        }
+    },
+
+    async connectToChatHub() {
+        connection = new signalR.HubConnectionBuilder()
+            .withUrl(`http://147.175.160.198:5294/chathub`, {
+                accessTokenFactory: () => accessToken || '' // если нужно — сюда токен
+            })
+            .withAutomaticReconnect()
+            .build();
+
+        connection
+            .start()
+            .then(() => {
+                console.log('SignalR connected');
+            })
+            .catch(console.error);
+    },
 
     async register(username: string, email: string, password: string) {
 
