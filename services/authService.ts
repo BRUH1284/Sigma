@@ -2,7 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import * as Application from 'expo-application';
 import { api } from '@/api/api';
 import { AxiosError } from 'axios';
-import signalR from '@microsoft/signalr';
+import signalR, { HubConnectionBuilder } from '@microsoft/signalr';
 
 const ACCESS_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_ACCESS_TOKEN_KEY!;
 const REFRESH_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_REFRESH_TOKEN_KEY!;
@@ -83,12 +83,21 @@ export const authService = {
     },
 
     async connectToChatHub() {
-        connection = new signalR.HubConnectionBuilder()
-            .withUrl(`http://147.175.160.198:5294/chathub`, {
-                accessTokenFactory: () => accessToken || '' // если нужно — сюда токен
-            })
-            .withAutomaticReconnect()
-            .build();
+        console.log('try to connect to chathub with token:', accessToken);
+        try {
+
+            connection = new HubConnectionBuilder()
+                .withUrl(`http://94.228.170.32:5294/chathub`, { // TODO: move to .env
+                    accessTokenFactory: () => accessToken || '' // если нужно — сюда токен
+                })
+                .withAutomaticReconnect()
+                .build();
+
+        } catch (e) {
+            console.log('failed to create connection', e);
+        }
+
+        console.log(connection);
 
         connection
             .start()

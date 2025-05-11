@@ -11,8 +11,8 @@ import {
 import { getChats } from '@/services/messageService';
 import { useProfile } from '@/hooks/useProfile';
 import { useRouter } from 'expo-router';
-import { authService } from '@/services/authService';
-import { useMessenger } from '@/hooks/userMessenger';
+import { useMessenger } from '@/hooks/useMessenger';
+import { useAuth } from '@/hooks/useAuth';
 
 type Chat = {
   username: string;
@@ -24,26 +24,30 @@ export default function MessengerScreen() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { profile, profileLoading, fetchMyProfile } = useProfile();
+  const { profileLoading } = useProfile();
   const { connectToChatHub, onMessageReceived, stopConnection } = useMessenger();
   const router = useRouter();
 
   useEffect(() => {
     const load = async () => {
       try {
-        await fetchMyProfile(); // ⚠️ позже, не раньше токена
 
-        if (!profile?.userName) return;
+        console.log(123);
+
+        if (!connectToChatHub || !onMessageReceived) {
+          alert("Logout service is unavailable.");
+          return;
+        }
 
         await connectToChatHub();
 
         const data = await getChats();
         setChats(data); // временно без фильтра
 
-        onMessageReceived((sender: any, content: any, time: any) => {
+        await onMessageReceived((sender, content, time) => {
           console.log(`📩 Message from ${sender} at ${time}: ${content}`);
-          // You can also update your UI or store the message here
         });
+
         // onMessageReceived(async () => {
         //   const updated = await getChats();
         //   setChats(updated);
@@ -58,7 +62,7 @@ export default function MessengerScreen() {
     load();
 
     return () => {
-      stopConnection();
+      stopConnection;
     };
   }, []);
 
@@ -68,7 +72,7 @@ export default function MessengerScreen() {
       style={styles.chatItem}
       onPress={() =>
         router.push({
-          pathname: '/',
+          pathname: '/(messenger)/[username]',
           params: { username: chat.username },
         })
       }
@@ -80,23 +84,17 @@ export default function MessengerScreen() {
     </TouchableOpacity>
   );
 
-  if (loading || profileLoading || !profile) {
-    return <ActivityIndicator style={{ marginTop: 30 }} />;
-  }
 
   if (chats.length === 0) {
     return <Text style={{ textAlign: 'center', marginTop: 30 }}>Нет чатов</Text>;
   }
 
   return (
-    <View style={styles.container}>
-
-      <FlatList
-        data={chats}
-        keyExtractor={(chat) => `${chat.username}-${chat.sentAt}`}
-        renderItem={renderItem}
-      />
-    </View>
+    <FlatList
+      data={chats}
+      keyExtractor={(chat) => `${chat.username}-${chat.sentAt}`}
+      renderItem={renderItem}
+    />
   );
 }
 

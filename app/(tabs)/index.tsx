@@ -19,7 +19,7 @@ export default function Index() {
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}
-                onPress={() => router.push('')}
+                onPress={() => router.push('/(messenger)/messenger')}
             >
                 <MaterialIcons name="message" size={20} color="#000" />
             </TouchableOpacity>

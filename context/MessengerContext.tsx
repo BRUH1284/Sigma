@@ -1,28 +1,27 @@
 import { authService } from "@/services/authService";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext } from "react";
 
 
 interface MessengerContextProps {
     connectToChatHub: () => Promise<void>;
-    onMessageReceived: (callback: (sender: string, content: string, time: string) => void) => void;
+    onMessageReceived: (callback: (sender: string, content: string, time: string) => void) => Promise<void>;
     stopConnection: () => Promise<void>;
 }
 
-export const MessengerContext = createContext<MessengerContextProps>({
-    connectToChatHub: async () => { },
-    onMessageReceived: () => { },
-    stopConnection: async () => { },
-});
+
+export const MessengerContext = createContext<MessengerContextProps | null>(null);
 
 export const MessengerProvider = ({ children }: any) => {
+    const service = authService;
     const connectToChatHub = async () => {
-        await authService.connectToChatHub();
+        console.log('try to connect');
+        await service.connectToChatHub();
     };
-    const onMessageReceived = (callback: (sender: string, content: string, time: string) => void) => {
-        authService.onMessageReceived(callback);
+    const onMessageReceived = async (callback: (sender: string, content: string, time: string) => void) => {
+        await service.onMessageReceived(callback);
     };
     const stopConnection = async () => {
-        await authService.stopConnection();
+        await service.stopConnection();
     };
 
     const value = {
