@@ -1,5 +1,7 @@
 export enum DataResource {
     Activities,
+    UserActivities,
+    ActivityRecords
 }
 
 export enum SyncStatus {

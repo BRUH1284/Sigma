@@ -1,15 +1,158 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7a3b61f3-83c7-4158-badf-2f65f6bcb285",
+  "id": "cfff859a-925a-475f-a267-375dbab34053",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "activities": {
       "name": "activities",
       "columns": {
+        "major_heading": {
+          "name": "major_heading",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "id": {
           "name": "id",
           "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "met_value": {
+          "name": "met_value",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "activity_records": {
+      "name": "activity_records",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "activity_code": {
+          "name": "activity_code",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "user_activity_id": {
+          "name": "user_activity_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "duration_m": {
+          "name": "duration_m",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "kcal": {
+          "name": "kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "time": {
+          "name": "time",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sync_status": {
+          "name": "sync_status",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "activity_records_duration_m_activities_id_fk": {
+          "name": "activity_records_duration_m_activities_id_fk",
+          "tableFrom": "activity_records",
+          "tableTo": "activities",
+          "columnsFrom": [
+            "duration_m"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "data_versions": {
+      "name": "data_versions",
+      "columns": {
+        "data_resource": {
+          "name": "data_resource",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "last_modified": {
+          "name": "last_modified",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "checksum": {
+          "name": "checksum",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "user_activities": {
+      "name": "user_activities",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false
@@ -34,6 +177,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "sync_status": {
+          "name": "sync_status",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         }
       },
       "indexes": {},

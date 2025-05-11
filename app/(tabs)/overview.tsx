@@ -1,6 +1,9 @@
+import ActivitiesCard from '@/components/ActivitiesCard';
 import { STYLES } from '@/constants/style';
 import { COLORS } from '@/constants/theme';
+import { ActivityProvider } from '@/context/ActivityContext';
 import { ActivityRecordProvider } from '@/context/ActivityRecordContext';
+import { UserActivityProvider } from '@/context/UserActivityContext';
 import { useActivityRecord } from '@/hooks/useActivityRecord';
 import React, { useRef } from 'react';
 import {
@@ -11,7 +14,10 @@ import {
     StyleSheet,
     Button,
     TouchableOpacity,
+    ScrollView
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 
 const data = Array.from({ length: 10 }, (_, i) => ({ id: i.toString(), title: `Item ${i + 1}` }));
@@ -21,20 +27,19 @@ const ITEM_SIZE = SCREEN_WIDTH / 3;
 const SIDE_PADDING = (SCREEN_WIDTH - ITEM_SIZE) / 2;
 
 function OverviewContent() {
-    const activityRecords = useActivityRecord();
-    const addActivityRecord = async () => {
-        activityRecords.createRecord(1, 30);
+    // const activityRecords = useActivityRecord();
+    // const addActivityRecord = async () => {
+    //     activityRecords.createRecord(1, 30);
 
-        console.log(`${(await activityRecords.getUnsyncedActivities())}`);
-        console.log(`${(await activityRecords.getTodayActivities()).length}`);
-    }
+    //     console.log(`${(await activityRecords.getUnsyncedActivities())}`);
+    //     console.log(`${(await activityRecords.getTodayActivities()).length}`);
+    // }
 
 
     const scrollX = useRef(new Animated.Value(0)).current;
     return (
-        <ActivityRecordProvider>
-
-            <View style={STYLES.container}>
+        <View style={[STYLES.container]}>
+            <View style={{ height: ITEM_SIZE }}>
                 <Animated.FlatList
                     data={data}
                     keyExtractor={(item) => item.id}
@@ -71,37 +76,20 @@ function OverviewContent() {
                         );
                     }}
                 />
-                <View style={STYLES.card}>
-                    <View style={{
-                        flexDirection: 'row',
-                        width: '100%',
-                        justifyContent: 'space-between'
-                    }}>
-                        <Text style={STYLES.title}>Activities</Text>
-                        <TouchableOpacity
-                            style={{
-                                height: 32,
-                                aspectRatio: 1,
-                                borderRadius: 32,
-                                backgroundColor: COLORS.gray,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}
-                            onPress={addActivityRecord}
-                        ></TouchableOpacity>
-
-                    </View>
-                </View>
-                <Button title={'add activity'} onPress={addActivityRecord}></Button>
             </View>
-        </ActivityRecordProvider>
+            <ActivitiesCard />
+        </View>
     );
 }
 
 export default function Overview() {
     return (
         <ActivityRecordProvider>
-            <OverviewContent />
+            <ActivityProvider>
+                <UserActivityProvider>
+                    <OverviewContent />
+                </UserActivityProvider>
+            </ActivityProvider>
         </ActivityRecordProvider>
     );
 }

@@ -62,7 +62,6 @@ export default DropdownField;
 
 const styles = StyleSheet.create({
     container: {
-        marginHorizontal: 32,
         alignSelf: "stretch",
         alignItems: 'baseline',
         justifyContent: "center",

@@ -50,6 +50,7 @@ export default function PhysicalDetails() {
         { label: 'Extreme', value: ActivityLevel.Extreme },
     ];
 
+    // TODO: change textfield to numberField
     return (
         <>
             <Stack.Screen options={{ title: 'Physical Details' }} />

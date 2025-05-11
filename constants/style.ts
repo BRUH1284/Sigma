@@ -10,16 +10,37 @@ export const STYLES = StyleSheet.create({
         padding: 16,
         backgroundColor: COLORS.surface
     },
+    overlay: {
+        flex: 1,
+        backgroundColor: "#00000088",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 16,
+        paddingVertical: 64,
+    },
+    popup: {
+        backgroundColor: COLORS.surface,
+        padding: 16,
+        borderRadius: 16,
+        width: '100%',
+        alignItems: 'center',
+        elevation: 4,
+        gap: 16
+    },
     card: {
         backgroundColor: COLORS.surface,
         elevation: 4,
         padding: 16,
-        borderRadius: 16
+        borderRadius: 16,
+        flexShrink: 1
     },
     title: {
         fontSize: 24,
         fontWeight: "bold",
-        marginBottom: 20,
+        color: COLORS.onSurface
+    },
+    header: {
+        fontSize: 18,
         color: COLORS.onSurface
     },
     text: {

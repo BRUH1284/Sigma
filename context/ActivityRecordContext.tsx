@@ -1,17 +1,15 @@
-import React, {
-    createContext,
-    useContext,
-    ReactNode,
-} from 'react';
+import React, { createContext, ReactNode } from 'react';
 import { ActivityRecordService } from '@/services/activityRecordService';
 import { useDrizzleDb } from '@/hooks/useDrizzleDb';
 import { ActivityRecord } from '@/db/schema';
 
 interface ActivityRecordContextProps {
-    createRecord: (activityCode: number, duration: number) => Promise<void>;
+    createRecord: (identificator: number | string, duration: number, kcal: number) => Promise<void>;
     getUnsyncedActivities: () => Promise<ActivityRecord[]>;
-    markActivitiesAsSynced: (ids: number[]) => Promise<void>;
-    getTodayActivities: () => Promise<ActivityRecord[]>;
+    markActivitiesAsSynced: (ids: string[]) => Promise<void>;
+    getTodayActivitiesLocal: () => Promise<ActivityRecord[]>;
+    deleteRecord: (id: string) => Promise<void>;
+    syncActivityRecords: () => Promise<void>;
 }
 
 export const ActivityRecordContext = createContext<ActivityRecordContextProps | null>(null);
@@ -20,21 +18,29 @@ export const ActivityRecordProvider = ({ children }: { children: ReactNode }) =>
     const drizzleDb = useDrizzleDb();
     const service = ActivityRecordService(drizzleDb);
 
-    const createRecord = async (activityCode: number, duration: number) => {
-        await service.create(activityCode, duration);
+    const createRecord = async (identificator: number | string, duration: number, kcal: number) => {
+        await service.create(identificator, duration, kcal);
     };
 
     const getUnsyncedActivities = async () => {
         return await service.getUnsynced();
     };
 
-    const markActivitiesAsSynced = async (ids: number[]) => {
+    const markActivitiesAsSynced = async (ids: string[]) => {
         await service.markAsSynced(ids);
     };
 
-    const getTodayActivities = async () => {
-        return await service.getToday();
+    const getTodayActivitiesLocal = async () => {
+        return await service.getTodayLocal();
     };
+
+    const deleteRecord = async (id: string) => {
+        await service.deleteById(id, false);
+    }
+
+    const syncActivityRecords = async () => {
+        await service.sync();
+    }
 
     return (
         <ActivityRecordContext.Provider
@@ -42,16 +48,12 @@ export const ActivityRecordProvider = ({ children }: { children: ReactNode }) =>
                 createRecord,
                 getUnsyncedActivities,
                 markActivitiesAsSynced,
-                getTodayActivities,
+                getTodayActivitiesLocal,
+                deleteRecord,
+                syncActivityRecords
             }}
         >
             {children}
         </ActivityRecordContext.Provider>
     );
 };
-
-export function useActivityRecord() {
-    const context = useContext(ActivityRecordContext);
-    if (!context) throw new Error("useActivityRecord must be used within a ActivityRecordProvider");
-    return context;
-}

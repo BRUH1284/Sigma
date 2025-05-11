@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { ActivityLevel, Gender, Goal, RegistrationData, UserClimate } from '@/types/registrationTypes';
 import { profileService } from '@/services/profileService';
-import { boolean } from 'zod';
+import { authService } from '@/services/authService';
 
 const initialRegistrationData: RegistrationData = {
     firstName: '',
@@ -28,7 +28,7 @@ interface RegistrationContextProps {
 }
 
 interface RegistrationState {
-    registered: boolean | null;
+    registered: boolean;
 }
 
 export const RegistrationContext = createContext<RegistrationContextProps>({
@@ -46,6 +46,13 @@ export const RegistrationProvider = ({ children }: any) => {
 
     useEffect(() => {
         checkRegistration();
+
+
+        // Subscribe to token updates from authService
+        authService.subscribeToTokenUpdates((newAuthState) => {
+            if (!newAuthState)
+                clearRegistration();
+        });
     }, []);
 
     const updateField = (field: keyof RegistrationData, value: any) => {
@@ -76,6 +83,8 @@ export const RegistrationProvider = ({ children }: any) => {
     };
 
     const clearRegistration = async () => {
+        setRegistrationData(initialRegistrationData);
+        setRegistrationState({ registered: false });
         await profileService.clearRegistrationStatus();
     };
 

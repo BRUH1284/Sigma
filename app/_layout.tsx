@@ -11,9 +11,9 @@ import { SQLiteProvider, openDatabaseSync } from 'expo-sqlite';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import migrations from '@/drizzle/migrations';
-import * as FileSystem from 'expo-file-system';
+import { DbDropService } from "@/services/dbDropService";
 
-export const DATABASE_NAME = 'sigma';
+const DATABASE_NAME = process.env.DATABASE_NAME || 'sigma';
 
 export default function RootLayout() {
   const expoDb = openDatabaseSync(DATABASE_NAME);
@@ -21,15 +21,8 @@ export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations);
   useDrizzleStudio(expoDb);
 
-  // const dbPath = `${FileSystem.documentDirectory}SQLite/${DATABASE_NAME}`;
-
-  // const fileExists = FileSystem.getInfoAsync(dbPath);
-  // if ((await fileExists).exists) {
-  //   await FileSystem.deleteAsync(dbPath, { idempotent: true });
-  //   console.log('Database deleted');
-  // } else {
-  //   console.log('Database file does not exist');
-  // }
+  // const dropDatabaseService = DbDropService();
+  // dropDatabaseService.dropDatabase();
 
   useEffect(() => {
     console.log("Drizzle Database Error:", error);

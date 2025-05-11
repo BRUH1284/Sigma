@@ -3,7 +3,8 @@ import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
 
 export const dataVersions = sqliteTable('data_versions', {
     resource: integer('data_resource').primaryKey({ autoIncrement: false }), // DataResource enum
-    lastModified: integer('last_modified').notNull()
+    lastModified: integer('last_modified'),
+    checksum: text('checksum')
 });
 
 export const activities = sqliteTable('activities', {
@@ -14,24 +15,25 @@ export const activities = sqliteTable('activities', {
 });
 
 export const userActivities = sqliteTable('user_activities', {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: text('id').primaryKey(),
     heading: text('major_heading').notNull(),
     description: text('description').notNull(),
     met: real('met_value').notNull(),
-    lastModified: integer('last_modified').notNull(), // Unix timestamp
     syncStatus: integer('sync_status')
         .notNull()
         .default(SyncStatus.NEW),
 });
 
 export const activityRecords = sqliteTable('activity_records', {
-    id: integer('id').primaryKey({ autoIncrement: true }),
-    activityCode: integer('activity_code').notNull(),
-    duration: integer('duration_m')
+    id: text('id').primaryKey(),
+    activityCode: integer('activity_code'),
+    userActivityId: text('user_activity_id'),
+    duration: real('duration_m')
         .notNull()
         .references(() => activities.code),
+    kcal: real('kcal')
+        .notNull(),
     time: integer('time').notNull(), // Unix timestamp
-    lastModified: integer('last_modified').notNull(), // Unix timestamp
     syncStatus: integer('sync_status')
         .notNull()
         .default(SyncStatus.NEW),
@@ -40,4 +42,4 @@ export const activityRecords = sqliteTable('activity_records', {
 export type DataVersions = typeof dataVersions.$inferSelect;
 export type Activity = typeof activities.$inferSelect;
 export type UserActivity = typeof userActivities.$inferSelect;
-export type ActivityRecord = typeof activityRecords.$inferSelect; 
+export type ActivityRecord = typeof activityRecords.$inferSelect;

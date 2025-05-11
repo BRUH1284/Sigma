@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { authService } from "@/services/authService";
 import { RegistrationContext } from "./RegistrationContext";
+import { useDrizzleDb } from "@/hooks/useDrizzleDb";
+import { DbDropService } from "@/services/dbDropService";
 
 export interface AuthResult {
     success: boolean;
@@ -26,6 +28,7 @@ export const AuthContext = createContext<AuthContextProps>({
 });
 
 export const AuthProvider = ({ children }: any) => {
+    const drizzleDb = useDrizzleDb();
     const [authState, setAuthState] = useState<{
         authenticated: boolean | null
     }>({
@@ -33,31 +36,30 @@ export const AuthProvider = ({ children }: any) => {
     });
 
     useEffect(() => {
-        const initializeAuth = async () => {
-            const { accessToken } = await authService.loadStoredTokens();
-            const newAuthState = !!accessToken;
-            if (authState.authenticated != newAuthState)
-                setAuthState({
-                    authenticated: !!accessToken
-                });
-        };
-
-        initializeAuth();
-
         // Subscribe to token updates from authService
-        const unsubscribe = authService.subscribeToTokenUpdates(({ accessToken }) => {
-            const newAuthState = !!accessToken;
-            if (authState.authenticated != newAuthState)
+        authService.subscribeToTokenUpdates((newAuthState) => {
+            console.log('new Auth state', newAuthState, 'old:', authState.authenticated);
+            if (authState.authenticated != newAuthState) {
                 setAuthState({
-                    authenticated: !!accessToken
+                    authenticated: newAuthState
                 });
+
+                if (newAuthState === false) {
+                    //Drop database
+                    console.log('dropped because:', newAuthState);
+                    clearData();
+                }
+            }
         });
 
-        // Return cleanup function that doesn't return anything
-        return () => {
-            unsubscribe();
-        };
+        authService.loadStoredTokens();
     }, []);
+
+    const clearData = async () => {
+        const dropDatabaseService = DbDropService();
+        dropDatabaseService.clearTables(drizzleDb);
+    };
+
     const register = async (
         username: string,
         email: string,

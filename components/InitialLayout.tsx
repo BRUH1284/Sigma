@@ -14,7 +14,7 @@ export default function InitialLayout() {
     useEffect(() => {
         const inAuthScreen = segments[0] == "(auth)";
 
-        //console.log(`init update: ${authState.authenticated} :::: ${registrationState.registered}`);
+        console.log(`init update: ${authState.authenticated} :::: ${registrationState.registered}`);
 
         if (!authState?.authenticated && !inAuthScreen)
             router.replace("/(auth)");

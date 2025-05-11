@@ -1,11 +1,11 @@
 import { api } from '@/api/api';
-import { useProfile } from '@/hooks/useProfile';
 import { UserProfile } from '@/types/userTypes';
 import { RegistrationData } from '@/types/registrationTypes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserPost } from '@/types/postTypes';
 
 export const profileService = {
+
     async submitRegistration(data: RegistrationData) {
         const response = await api.put('/profiles/me/settings', data);
 
@@ -20,7 +20,7 @@ export const profileService = {
         await AsyncStorage.setItem('isRegistered', 'true');
     },
 
-    async isRegistered(): Promise<boolean | null> {
+    async isRegistered(): Promise<boolean> {
         const isRegistered = await AsyncStorage.getItem('isRegistered');
 
         if (isRegistered != null)
@@ -28,9 +28,14 @@ export const profileService = {
 
         try {
             const response = await api.get('/profiles/me/settings');
-            return response.data.weight ? response.data.weight != '0' : null;
+
+            const isRegistered = response.data.weight != '0';
+            if (isRegistered)
+                this.setRegistrationStatus();
+
+            return isRegistered;
         } catch {
-            return null;
+            return false;
         }
     },
 

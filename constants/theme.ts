@@ -13,5 +13,6 @@ export const COLORS = {
     onSecondary: "#f9f9f9",
     onBackground: "#202020",
     onSurface: "#202020",
-    gray: "#a8a8a8"
+    gray: "#626262",
+    lightGray: "#ccc"
 }

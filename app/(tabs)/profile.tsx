@@ -27,7 +27,9 @@ export default function MyProfile() {
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         await fetchMyProfile();
+        console.log('profile fetched');
         await fetchMyPosts();
+        console.log('posts fetched');
         setRefreshing(false);
     }, [fetchMyProfile]);
 
