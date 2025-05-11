@@ -3,13 +3,13 @@ import { TouchableOpacity, StyleSheet, ViewStyle } from "react-native";
 import DynamicIcon, { IconItem } from "./DynamicIcon";
 import { COLORS } from "@/constants/theme";
 
-export type IconButton = {
+export type Props = {
     icon: IconItem;
     onPress?: () => void;
     style?: ViewStyle;
 };
 
-export default function IconButton({ icon, onPress, style }: IconButton) {
+export default function IconButton({ icon, onPress, style }: Props) {
     return (
         <TouchableOpacity
             style={[styles.button, style]}

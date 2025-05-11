@@ -21,17 +21,17 @@ export const STYLES = StyleSheet.create({
     popup: {
         backgroundColor: COLORS.surface,
         padding: 16,
-        borderRadius: 16,
+        borderRadius: 24,
         width: '100%',
         alignItems: 'center',
         elevation: 4,
         gap: 16
     },
     card: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: COLORS.secondSurface,
         elevation: 4,
         padding: 16,
-        borderRadius: 16,
+        borderRadius: 24,
         flexShrink: 1
     },
     title: {

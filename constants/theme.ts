@@ -9,6 +9,8 @@ export const COLORS = {
     danger: "#f44336",
     background: "#f9f9f9",
     surface: "#f9f9f9",
+    secondSurface: "#e0e0e0",
+    thirdSurface: "#d6d6d6",
     onPrimary: "#f9f9f9",
     onSecondary: "#f9f9f9",
     onBackground: "#202020",

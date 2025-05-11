@@ -1,9 +1,9 @@
-import { RegistrationData } from '@/types/registrationTypes';
+import { UserData } from '@/types/registrationTypes';
 import { registrationSchema } from '@/validation/registrationSchema';
 
-export function useRegistrationStep(registrationData: RegistrationData) {
+export function useRegistrationStep(registrationData: UserData) {
 
-    const steps: (keyof RegistrationData)[][] = [
+    const steps: (keyof UserData)[][] = [
         ['firstName', 'lastName'],
         ['weight', 'height', 'gender', 'activityLevel'],
         ['userClimate'],
@@ -14,7 +14,7 @@ export function useRegistrationStep(registrationData: RegistrationData) {
         const fields = steps[stepIndex];
         const stepSchema = registrationSchema.pick(
             fields.reduce((acc, f) => ({ ...acc, [f]: true }), {}) as {
-                [K in keyof RegistrationData]?: true;
+                [K in keyof UserData]?: true;
             }
         );
 

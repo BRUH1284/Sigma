@@ -1,12 +1,12 @@
 import { api } from '@/api/api';
 import { UserProfile } from '@/types/userTypes';
-import { RegistrationData } from '@/types/registrationTypes';
+import { UserData } from '@/types/registrationTypes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserPost } from '@/types/postTypes';
 
 export const profileService = {
 
-    async submitRegistration(data: RegistrationData) {
+    async submitRegistration(data: UserData) {
         const response = await api.put('/profiles/me/settings', data);
 
         return response.data;

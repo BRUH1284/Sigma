@@ -1,10 +1,13 @@
 import React from 'react';
-import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome6, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { StyleProp, TextStyle } from 'react-native';
 
 const iconLibraries = {
     MaterialIcons,
     FontAwesome,
     Ionicons,
+    MaterialCommunityIcons,
+    FontAwesome6
 };
 
 export type IconLibraryName = keyof typeof iconLibraries;
@@ -14,7 +17,7 @@ export type IconItem = {
     size: number;
     library: IconLibraryName;
     color?: string;
-    style?: any;
+    style?: StyleProp<TextStyle>;
 };
 
 export default function DynamicIcon({ name, size, library, color, style }: IconItem) {

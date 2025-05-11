@@ -13,7 +13,7 @@ type Props = {
     valueJump?: number
     maxValue?: number
     minValue?: number
-    minWidth: number
+    minWidth?: number
 };
 
 

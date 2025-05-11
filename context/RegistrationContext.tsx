@@ -1,9 +1,9 @@
 import { createContext, useEffect, useState } from 'react';
-import { ActivityLevel, Gender, Goal, RegistrationData, UserClimate } from '@/types/registrationTypes';
+import { ActivityLevel, Gender, Goal, UserData, UserClimate } from '@/types/registrationTypes';
 import { profileService } from '@/services/profileService';
 import { authService } from '@/services/authService';
 
-const initialRegistrationData: RegistrationData = {
+const initialRegistrationData: UserData = {
     firstName: '',
     lastName: '',
     bio: 'test bio',
@@ -19,9 +19,9 @@ const initialRegistrationData: RegistrationData = {
 
 
 interface RegistrationContextProps {
-    registrationData: RegistrationData;
+    registrationData: UserData;
     registrationState: RegistrationState;
-    updateField: (field: keyof RegistrationData, value: any) => void;
+    updateField: (field: keyof UserData, value: any) => void;
     submitRegistration: () => Promise<{ success: boolean, msg?: string; data?: any }>;
     checkRegistration: () => Promise<boolean | null>;
     clearRegistration: () => void;
@@ -41,7 +41,7 @@ export const RegistrationContext = createContext<RegistrationContextProps>({
 });
 
 export const RegistrationProvider = ({ children }: any) => {
-    const [registrationData, setRegistrationData] = useState<RegistrationData>(initialRegistrationData);
+    const [registrationData, setRegistrationData] = useState<UserData>(initialRegistrationData);
     const [registrationState, setRegistrationState] = useState<RegistrationState>({ registered: false });
 
     useEffect(() => {
@@ -55,7 +55,7 @@ export const RegistrationProvider = ({ children }: any) => {
         });
     }, []);
 
-    const updateField = (field: keyof RegistrationData, value: any) => {
+    const updateField = (field: keyof UserData, value: any) => {
         setRegistrationData((prev) => ({ ...prev, [field]: value }));
     };
 
