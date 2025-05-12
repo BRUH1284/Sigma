@@ -45,7 +45,7 @@ export default function ClimateDetails() {
                     size={128}
                     strokeWidth={12}
                     rings={[
-                        { color: colors.primary, progress: 0.5, progressStart: 0.25 }
+                        { color: colors.primary, progress: 0.5 }
                     ]}
                     icons={[
                         { name: 'cloud-queue', library: 'MaterialIcons' }

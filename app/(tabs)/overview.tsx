@@ -5,9 +5,6 @@ import IconButton from '@/components/IconButton';
 import NumberPopup from '@/components/NumberPopup';
 import SearchPopup from '@/components/SearchPopup';
 import SummaryCard from '@/components/SummaryCard';
-// import { STYLES } from '@/constants/style';
-// import { COLORS } from '@/constants/theme';
-import { useTheme } from '@/context/ThemeContext';
 import { useStyles } from '@/constants/style';
 import { ActivityProvider } from '@/context/ActivityContext';
 import { ActivityRecordProvider } from '@/context/ActivityRecordContext';
@@ -25,17 +22,21 @@ import {
     Animated,
     Dimensions,
     Modal,
-    Pressable
+    Pressable,
+    FlatList
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRecommendations } from '@/hooks/useRecomendations';
+import CircularProgress from '@/components/CircularProgress';
+import { useTheme } from '@react-navigation/native';
+import { COLORS } from '@/constants/theme';
 
-
-const data = Array.from({ length: 10 }, (_, i) => ({ id: i.toString(), title: `Item ${i + 1}` }));
-
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_WIDTH = Dimensions.get('window').width - 32;
 const ITEM_SIZE = SCREEN_WIDTH / 3;
 const SIDE_PADDING = (SCREEN_WIDTH - ITEM_SIZE) / 2;
+
+const TOTAL_DAYS = 30;
+const START_INDEX = TOTAL_DAYS / 2;
 
 type ActivityRecordData = {
     id: string,
@@ -49,25 +50,28 @@ type AddActivityData = {
     id?: number,
     name: string,
     text: string,
-    kcal: number,
+    met: number,
     activityCode?: number,
     userActivityId?: string,
     onAdd?: () => void,
 }
 
 function OverviewContent() {
-    const { createRecord, getTodayActivitiesLocal, deleteRecord, syncActivityRecords } = useActivityRecord();
+    const { createRecord, getDayActivitiesLocal, getTodayActivitiesLocal, deleteRecord, syncActivityRecords } = useActivityRecord();
     const { syncActivities, getAllActivities, getActivityByCode } = useActivity();
     const { syncUserActivities, getUserActivityById, getAllUserActivities } = useUserActivity();
     const [activityRecordsData, setActivityRecordsData] = useState<ActivityRecordData[]>([]);
+    const [activityRecordsKcalSum, setActivityRecordsKcalSum] = useState<number>(0);
     const [selectedActivity, setSelectedActivity] = useState<AddActivityData | null>(null);
     const [activities, setActivities] = useState<AddActivityData[]>([]);
+    const [monthProgress, setMonthProgress] = useState<number[]>([]);
     const [search, setSearch] = useState("");
     const [number, setNumber] = useState(0);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const { userData, setWeight, loadData } = useUserData();
     const [popup, setPopup] = useState<'none' | 'activity' | 'weight'>('none');
     const styles = useStyles();
+    const { colors } = useTheme();
 
     const recommendations = useRecommendations();
 
@@ -92,14 +96,14 @@ function OverviewContent() {
             id: index + 1,
             name: activity.heading,
             text: activity.description,
-            kcal: activity.met,
+            met: activity.met,
             activityCode: (activity as Activity).code,
             userActivityId: (activity as UserActivity).id,
             onAdd: () => {
                 setSelectedActivity({
                     name: activity.heading,
                     text: activity.description,
-                    kcal: activity.met,
+                    met: activity.met,
                     activityCode: (activity as Activity).code,
                     userActivityId: (activity as UserActivity).id
                 })
@@ -112,11 +116,14 @@ function OverviewContent() {
         await syncActivityRecords();
         const activityRecords = await getTodayActivitiesLocal();
 
+
         console.log('loaded activities count:', activityRecords.length);
+        let activityRecKcalSum = 0;
         const mappedActivityRecordsData: ActivityRecordData[] = await Promise.all(
             activityRecords.map(async (record) => {
-                let description = '';
+                activityRecKcalSum += record.kcal;
 
+                let description = '';
 
                 if (record.activityCode != null)
                     description = (await getActivityByCode(record.activityCode)).description;
@@ -133,7 +140,22 @@ function OverviewContent() {
             })
         );
 
+
+        let i = 0;
+        const mProgress: number[] = [];
+        const targetProgress = recommendations.rmrCalculator(userData);
+        for (i; i < TOTAL_DAYS; i++) {
+            const startOfDay = getStartOfDayUnix(i, START_INDEX);
+            const dateProgress = await getDateProgress(startOfDay) / targetProgress;
+
+            mProgress.push(dateProgress);
+        }
+
+        setActivityRecordsKcalSum(activityRecKcalSum);
         setActivityRecordsData(mappedActivityRecordsData);
+
+
+        setMonthProgress(mProgress);
 
         setIsRefreshing(false);
     };
@@ -164,7 +186,7 @@ function OverviewContent() {
 
         const identificator = selectedActivity!.userActivityId ?? selectedActivity?.activityCode!;
 
-        await createRecord(identificator, number, number * 100);
+        await createRecord(identificator, number, recommendations.metCalculator(selectedActivity!.met, number, userData?.weight ?? 0));
         await syncRecords();
 
     };
@@ -178,58 +200,92 @@ function OverviewContent() {
         }
     };
 
+    function getStartOfDayUnix(index: number, startIndex: number) {
+        const today = new Date();
+        const offsetDays = index - startIndex;
+
+        const shiftedDate = new Date(today);
+        shiftedDate.setDate(today.getDate() + offsetDays);
+        shiftedDate.setHours(0, 0, 0, 0); // Start of day
+
+        return Math.floor(shiftedDate.getTime() / 1000);
+    }
+
+    const getDateProgress = async (startOfDay: number) => {
+        const dayActivityRecords = await getDayActivitiesLocal(startOfDay);
+
+        let kcalSum = 0;
+        for (const activity of dayActivityRecords) {
+            kcalSum += activity.kcal;
+        }
+        return kcalSum;
+    }
+
+
+
     const scrollX = useRef(new Animated.Value(0)).current;
+    const renderItem = ({ index }: any) => {
+        const unixStartOfDay = getStartOfDayUnix(index, START_INDEX);
+        const isoDate = new Date((unixStartOfDay + 86400) * 1000).toISOString().slice(0, 10);
+
+        return (
+            <Animated.View style={{
+                width: ITEM_SIZE,
+                alignItems: 'center'
+            }}
+            >
+                <CircularProgress
+                    size={ITEM_SIZE - 8}
+                    strokeWidth={8}
+                    rings={[
+                        { color: COLORS.secondaryVariant, progress: monthProgress[index] },
+                        // { color: 'blue', progress: 0.5 },
+                        // { color: COLORS.success, progress: 0 }
+                    ]}
+                    icons={[
+                        { name: 'local-fire-department', library: 'MaterialIcons' },
+                        // { name: 'water', library: 'MaterialCommunityIcons' },
+                        // { name: 'food-fork-drink', library: 'MaterialCommunityIcons' },
+                    ]}
+                />
+                <Text style={[styles.text, { padding: 4 }]}>{isoDate}</Text>
+            </Animated.View>
+        );
+    };
+
+
     return (
         <SafeAreaView style={[styles.container, { paddingVertical: 0 }]}>
-            <View style={{ height: ITEM_SIZE }}>
+            <View style={[styles.card, {
+                height: ITEM_SIZE + 48,
+                padding: 0,
+                paddingVertical: 16,
+                flexShrink: 0,
+            }]}>
                 <Animated.FlatList
-                    data={data}
-                    keyExtractor={(item) => item.id}
+                    data={Array.from({ length: TOTAL_DAYS })}
+                    keyExtractor={(_, index) => index.toString()}
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{ paddingHorizontal: SIDE_PADDING }}
                     decelerationRate="fast"
-                    snapToInterval={ITEM_SIZE}
+                    snapToInterval={0}
                     snapToAlignment="start"
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-                        { useNativeDriver: true }
+                        { useNativeDriver: false }
                     )}
                     scrollEventThrottle={16}
-                    renderItem={({ item, index }) => {
-                        const inputRange = [
-                            (index - 1) * ITEM_SIZE,
-                            index * ITEM_SIZE,
-                            (index + 1) * ITEM_SIZE,
-                        ];
-
-                        const scale = scrollX.interpolate({
-                            inputRange,
-                            outputRange: [0.8, 1, 0.8],
-                            extrapolate: 'clamp',
-                        });
-
-                        return (
-                            <View style={{ width: ITEM_SIZE, height: ITEM_SIZE }}>
-                                <Animated.View style={{
-                                    flex: 1,
-                                    backgroundColor: '#2196F3',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    borderRadius: 10,
-                                    padding: 10,
-                                    transform: [{ scale }],
-                                }}
-                                >
-                                    <Text style={{
-                                        color: '#fff',
-                                        fontSize: 18,
-                                        fontWeight: 'bold',
-                                    }}>{item.title}</Text>
-                                </Animated.View>
-                            </View>
-                        );
-                    }}
+                    renderItem={renderItem}
+                    windowSize={21}
+                    maxToRenderPerBatch={10}
+                    removeClippedSubviews={true}
+                    initialScrollIndex={START_INDEX}
+                    getItemLayout={(_, index) => ({
+                        length: ITEM_SIZE,
+                        offset: ITEM_SIZE * index,
+                        index,
+                    })}
                 />
             </View>
             <View style={{ flexDirection: 'row', width: '100%', height: 80, gap: 16 }}>
@@ -276,7 +332,7 @@ function OverviewContent() {
             </View>
             <SummaryCard
                 headerText='Activities'
-                headerKcal={123}
+                headerKcal={activityRecordsKcalSum}
                 onHeaderAddButton={() => { setPopup('activity') }}
                 flatListComponent={ActivityRowSummary}
                 flatListComponentProps={activityRecordsData}
@@ -289,7 +345,7 @@ function OverviewContent() {
                 animationType="fade"
                 onRequestClose={closeModal}
             >
-                <Pressable style={styles.overlay} onPress={closeModal}>
+                <Pressable style={styles.overlay} onPress={() => { }}>
                     {popup === 'activity' && !selectedActivity && (
                         <SearchPopup
                             headerText='Add'
@@ -313,7 +369,7 @@ function OverviewContent() {
                         <NumberPopup
                             headerText={selectedActivity.name}
                             onBack={() => setSelectedActivity(null)}
-                            acceptText={`${selectedActivity.kcal} kcal`}
+                            acceptText={`${recommendations.metCalculator(selectedActivity.met, number, userData?.weight ?? 0)} kcal`}
                             onAccept={(addRecord)}
                             text={selectedActivity.text}
                             placeholder='Minutes'
@@ -325,7 +381,7 @@ function OverviewContent() {
                     {popup === 'weight' && (
                         <NumberPopup
                             headerText='Weight'
-                            onBack={() => closeModal}
+                            onBack={closeModal}
                             onAccept={() => {
                                 setWeight(number);
                                 closeModal();

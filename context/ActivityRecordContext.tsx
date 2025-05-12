@@ -8,6 +8,7 @@ interface ActivityRecordContextProps {
     getUnsyncedActivities: () => Promise<ActivityRecord[]>;
     markActivitiesAsSynced: (ids: string[]) => Promise<void>;
     getTodayActivitiesLocal: () => Promise<ActivityRecord[]>;
+    getDayActivitiesLocal: (startOfDay: number) => Promise<ActivityRecord[]>;
     deleteRecord: (id: string) => Promise<void>;
     syncActivityRecords: () => Promise<void>;
 }
@@ -34,6 +35,10 @@ export const ActivityRecordProvider = ({ children }: { children: ReactNode }) =>
         return await service.getTodayLocal();
     };
 
+    const getDayActivitiesLocal = async (startOfDay: number) => {
+        return await service.getDayLocal(startOfDay);
+    };
+
     const deleteRecord = async (id: string) => {
         await service.deleteById(id, false);
     }
@@ -49,6 +54,7 @@ export const ActivityRecordProvider = ({ children }: { children: ReactNode }) =>
                 getUnsyncedActivities,
                 markActivitiesAsSynced,
                 getTodayActivitiesLocal,
+                getDayActivitiesLocal,
                 deleteRecord,
                 syncActivityRecords
             }}

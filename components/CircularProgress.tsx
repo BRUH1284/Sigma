@@ -2,28 +2,16 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg, { Circle, G } from 'react-native-svg';
 import Animated, {
-    useSharedValue,
     useAnimatedProps,
-    withTiming,
 } from 'react-native-reanimated';
-import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
 // import { COLORS } from '@/constants/theme';
-import { useStyles } from '@/constants/style';
 import { useTheme } from '@/context/ThemeContext';
-
-const iconLibraries = {
-    MaterialIcons,
-    FontAwesome,
-    Ionicons
-};
-
-type IconLibraryName = 'MaterialIcons' | 'FontAwesome' | 'Ionicons';
+import DynamicIcon, { IconLibraryName } from './DynamicIcon';
 
 type Ring = {
     color: string;
     backgroundColor?: string;
     progress: number;
-    progressStart?: number;
 };
 
 type IconItem = {
@@ -37,7 +25,6 @@ type Props = {
     size: number
     strokeWidth: number,
     fill?: string,
-    animationDuration?: number;
     rings: Ring[];
     iconSize?: number;
     icons?: IconItem[];
@@ -49,12 +36,10 @@ const CircularProgress: React.FC<Props> = ({
     size,
     strokeWidth,
     fill = "none",
-    animationDuration = 1000,
     rings,
     icons = [],
     iconSize = null,
 }) => {
-    const styles = useStyles();
     const { colors } = useTheme();
     const iconContainerSize = (size - rings.length * strokeWidth) / 2 * Math.SQRT2;
     iconSize = iconSize || iconContainerSize / Math.ceil(Math.sqrt(icons.length)) * 0.85;;
@@ -63,38 +48,22 @@ const CircularProgress: React.FC<Props> = ({
             width: size,
             height: size,
             position: 'relative',
-            margin: 32
         }}>
             <Svg width={size} height={size}>
                 {rings.map((ring, index) => {
-                    const progressStart = ring.progressStart || 0;
-                    const progress = useSharedValue(progressStart);
+                    const progress = ring.progress;
 
-                    React.useEffect(() => {
-                        progress.value = withTiming(ring.progress, { duration: animationDuration });
-                    }, [ring.progress]);
-
-                    const ringSize = size - index * strokeWidth;
+                    const padding = 2;
+                    const ringSize = size - index * strokeWidth - padding;
                     const ringRadius = (ringSize - (index + 1) * strokeWidth) / 2;
                     const ringCircumference = ringRadius * 2 * Math.PI;
 
-                    const animatedProps = useAnimatedProps(() => {
-                        const strokeDashoffset =
-                            (ringCircumference - (ringCircumference * progress.value));
-                        return {
-                            strokeDashoffset: strokeDashoffset,
-                        };
-                    });
-
-                    const dotX = ringSize - strokeWidth / 2;
-                    const dotY = size / 2;
-                    const dotR = strokeWidth / 2;
-
+                    const strokeDashoffset = ringCircumference - (ringCircumference * progress);
 
                     return (
                         <G key={index} rotation="-90" origin={`${size / 2}, ${size / 2}`}>
                             <Circle
-                                stroke={ring.backgroundColor || colors.gray}
+                                stroke={ring.backgroundColor || colors.lightGray}
                                 fill={fill}
                                 cx={size / 2}
                                 cy={size / 2}
@@ -110,13 +79,7 @@ const CircularProgress: React.FC<Props> = ({
                                 strokeWidth={strokeWidth}
                                 strokeLinecap="round"
                                 strokeDasharray={`${ringCircumference}, ${ringCircumference}`}
-                                animatedProps={animatedProps}
-                            />
-                            <Circle
-                                cx={dotX}
-                                cy={dotY}
-                                r={dotR}
-                                fill={ring.color}
+                                strokeDashoffset={strokeDashoffset}
                             />
                         </G>
                     );
@@ -126,8 +89,9 @@ const CircularProgress: React.FC<Props> = ({
             <View style={[{
                 position: 'absolute',
                 flexDirection: 'row',
+                flexWrap: 'wrap',
                 justifyContent: 'center',
-                alignItems: 'center',
+                alignContent: 'center',
                 top: '50%',
                 left: '50%'
             }, {
@@ -139,15 +103,13 @@ const CircularProgress: React.FC<Props> = ({
                 ]
             },]}>
                 {icons.map((icon, index) => {
-                    const IconLib = iconLibraries[icon.library];
-                    if (!IconLib) return null;
                     return (
-                        <IconLib
+                        <DynamicIcon
                             key={index}
-                            name={icon.name as any}
+                            name={icon.name}
                             size={iconSize}
-                            color={icon.color || colors.onSurface}
-                            style={{marginHorizontal: 4}}
+                            color={icon.color}
+                            library={icon.library}
                         />
                     );
                 })}

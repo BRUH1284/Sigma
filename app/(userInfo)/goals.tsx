@@ -58,7 +58,7 @@ export default function PhysicalDetails() {
                     size={128}
                     strokeWidth={12}
                     rings={[
-                        { color: colors.primary, progress: 0.75, progressStart: 0.5 }
+                        { color: colors.primary, progress: 0.75 }
                     ]}
                     icons={[{ name: 'flag', library: 'MaterialIcons' }]}
                 />

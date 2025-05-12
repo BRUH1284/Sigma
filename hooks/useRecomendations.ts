@@ -3,6 +3,7 @@ import * as recommendationsService from "@/services/recommendationsService";
 export const useRecommendations = () => {
     return {
         rmrCalculator: recommendationsService.rmrCalculator,
-        waterCalculator: recommendationsService.waterCalculator
+        waterCalculator: recommendationsService.waterCalculator,
+        metCalculator: recommendationsService.metCalculator
     };
 };

@@ -35,15 +35,14 @@ export default function SearchPopup({
 
 
     return (
-        <Pressable
+        <View
             style={styles.popup}
-            onPress={(e) => e.stopPropagation()}
         >
             <View style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 width: '100%',
-                gap: 8,
+                gap: 8
             }}>
                 <IconButton
                     style={{ backgroundColor: colors.surface }}
@@ -73,6 +72,6 @@ export default function SearchPopup({
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderItem}
             />
-        </Pressable>
+        </View>
     )
 }

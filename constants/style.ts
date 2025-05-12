@@ -33,6 +33,7 @@ export const useStyles = () => {
         popup: {
             backgroundColor: colors.surface,
             padding: 16,
+            marginVertical: 64,
             borderRadius: 24,
             width: "100%",
             alignItems: "center",

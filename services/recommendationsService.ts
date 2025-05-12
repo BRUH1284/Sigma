@@ -1,5 +1,11 @@
 import { ActivityLevel, Gender, UserClimate, UserData } from "@/types/registrationTypes";
 
+export const metCalculator = (met: number, minutes: number, weight: number) => {
+    const result = weight * met * minutes / 60;
+
+    return Math.round(result);
+};
+
 // Mifflin-St Jeor Equation
 export const rmrCalculator = (userData?: UserData) => {
     if (!userData)

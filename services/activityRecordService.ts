@@ -183,6 +183,20 @@ export function ActivityRecordService(drizzleDb: ReturnType<typeof drizzle>) {
                     )
                 );
         },
+        async getDayLocal(startOfDayTimestamp: number) {
+            const endTimestamp = startOfDayTimestamp + 86400;
+
+            return await drizzleDb
+                .select()
+                .from(activityRecords)
+                .where(
+                    and(
+                        gte(activityRecords.time, startOfDayTimestamp),
+                        lt(activityRecords.time, endTimestamp),
+                        ne(activityRecords.syncStatus, SyncStatus.DELETED)
+                    )
+                );
+        },
         async getById(id: string) {
             return await drizzleDb
                 .select()

@@ -7,13 +7,12 @@ import IconButton from "./IconButton";
 
 type Props = {
     text: string;
-    kcal: number;
+    met: number;
     onAdd: () => void;
 };
 
-export default function ActivityRowAdd({ text, kcal, onAdd }: Props) {
+export default function ActivityRowAdd({ text, met, onAdd }: Props) {
     const styles = useStyles();
-    const { colors } = useTheme();
 
     return (
         <View
@@ -29,7 +28,7 @@ export default function ActivityRowAdd({ text, kcal, onAdd }: Props) {
             <Text style={{
                 flex: 1,
             }}>{text}</Text>
-            <Text style={[styles.text, { flexShrink: 0, textAlign: 'center' }]}>{`${kcal}\nkcal/h`}</Text>
+            <Text style={[styles.text, { flexShrink: 0, textAlign: 'center' }]}>{`${met}\nkcal/h`}</Text>
             <IconButton
                 style={{ alignSelf: 'center' }}
                 icon={{ size: 24, name: 'add', library: 'MaterialIcons' }}
