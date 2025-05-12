@@ -12,12 +12,15 @@ import { useRouter } from 'expo-router';
 import { UserSummary } from '@/types/userTypes';
 import { api } from '@/api/api'; 
 import { Image } from 'react-native';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function UserSearchScreen() {
   const [query, setQuery] = useState('');
   const [users, setUsers] = useState<UserSummary[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
 
   const searchUsers = async (searchQuery: string) => {
     if (!searchQuery.trim()) {
@@ -104,45 +107,47 @@ export default function UserSearchScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+const getStyles = (colors: any) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background, marginTop: 30, },
   searchHeader: {
     flexDirection: 'row',
     padding: 10,
     borderBottomWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.thirdSurface,
     alignItems: 'center',
   },
   searchInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.thirdSurface,
     borderRadius: 20,
     padding: 10,
     marginRight: 10,
+    color: colors.onBackground,
   },
   cancelButton: {
     padding: 10,
   },
   cancelButtonText: {
-    color: '#007AFF',
+    color: colors.secondary,
     fontSize: 16,
   },
   userItem: {
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.thirdSurface,
   },
   username: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: colors.onBackground
   },
   emptyText: {
     textAlign: 'center',
     marginTop: 30,
     fontSize: 16,
-    color: '#555',
+    color: colors.gray,
   },
   loader: {
     marginTop: 20,

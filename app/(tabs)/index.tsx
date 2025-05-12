@@ -10,7 +10,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Index() {
   const router = useRouter();
-  const styles = useStyles();
   const { colors } = useTheme();
 
   const [steps, setSteps] = useState(0);
@@ -34,10 +33,10 @@ export default function Index() {
   }, []);
 
   return (
-    <SafeAreaView style={{ padding: 16 }}>
+    <SafeAreaView style={{ padding: 16, backgroundColor: colors.background, flex: 1 }}>
       {/* Верхняя панель */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Sigma</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface }}>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', color: colors.onPrimary }}>Sigma</Text>
         <TouchableOpacity
           style={{
             height: 32,
@@ -59,16 +58,16 @@ export default function Index() {
           marginTop: 24,
           padding: 16,
           borderRadius: 12,
-          backgroundColor: '#f0f0f0',
+          backgroundColor: colors.background,
           elevation: 2, // тень на Android
-          shadowColor: '#000', // тень на iOS
+          shadowColor: colors.onBackground, // тень на iOS
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.2,
           shadowRadius: 4,
         }}
       >
-        <Text style={{ fontSize: 18, marginBottom: 8 }}>Step Tracker</Text>
-        <Text style={{ fontSize: 16 }}>
+        <Text style={{ fontSize: 18, marginBottom: 8, color: colors.onPrimary }}>Step Tracker</Text>
+        <Text style={{ fontSize: 16, color: colors.onPrimary }}>
           {isAvailable === false ? 'Pedometer is not available' : `Steps today: ${steps}`}
         </Text>
       </View>

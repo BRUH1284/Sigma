@@ -23,6 +23,7 @@ import {
 import { useLocalSearchParams } from 'expo-router';
 import { useMessenger } from '@/hooks/useMessenger';
 import { getConversation, sendMessage } from '@/services/messageService';
+import { useTheme } from '@/context/ThemeContext';
 
 type Message = {
   id: string;
@@ -38,6 +39,8 @@ export default function ChatScreen() {
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const { onMessageReceived } = useMessenger();
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
 
   useEffect(() => {
     const loadMessages = async () => {
@@ -156,10 +159,11 @@ export default function ChatScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
+    marginTop: 30,
   },
   emptyContainer: {
     flex: 1,
@@ -168,7 +172,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#555',
+    color: colors.onBackground,
     marginBottom: 20,
   },
   messageContainer: {
@@ -179,45 +183,45 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   sentMessage: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
     alignSelf: 'flex-end',
   },
   receivedMessage: {
-    backgroundColor: '#E5E5EA',
+    backgroundColor: colors.secondSurface,
     alignSelf: 'flex-start',
   },
   messageText: {
     fontSize: 16,
-    color: '#000',
+    color: colors.onPrimary,
   },
   messageTime: {
     fontSize: 12,
-    color: '#666',
+    color: colors.gray,
     marginTop: 5,
   },
   inputContainer: {
     flexDirection: 'row',
     padding: 10,
     borderTopWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.thirdSurface,
   },
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.thirdSurface,
     borderRadius: 20,
     padding: 10,
     marginRight: 10,
   },
   sendButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.secondary,
     borderRadius: 20,
     paddingVertical: 10,
     paddingHorizontal: 15,
     justifyContent: 'center',
   },
   sendButtonText: {
-    color: '#fff',
+    color: colors.onSecondary,
     fontSize: 16,
   },
   loadingContainer: {
