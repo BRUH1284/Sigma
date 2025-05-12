@@ -9,12 +9,18 @@ import { useRegistration } from '@/hooks/useRegistration';
 import PostCard from '@/components/PostCard';
 import { MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useUserData } from '@/hooks/useUserData';
+import { UserDataProvider } from '@/context/UserDataContext';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+import PostCreationCard from '@/components/PostCreationCard';
 // import { COLORS } from '@/constants/theme';
 
-export default function MyProfile() {
-    const { profile, posts, profileLoading, postsLoading, error, fetchMyProfile, fetchMyPosts } = useProfile();
+function MyProfileContent() {
+    const { profile, posts, profileLoading, postsLoading, error, fetchMyProfile, fetchMyPosts, addNewPost } = useProfile();
     const { onLogout } = useAuth();
     const { checkRegistration } = useRegistration();
+    const { userData } = useUserData();
 
     const [refreshing, setRefreshing] = useState(false);
 
@@ -39,6 +45,15 @@ export default function MyProfile() {
         setRefreshing(false);
     }, [fetchMyProfile]);
 
+    const addPost = async (content: string, images: any[], location: { latitude: number; longitude: number } | null) => {
+        try {
+            await addNewPost(`${content}\n${!location?.latitude ? '' : `created at: ${location?.latitude} ${location?.longitude}`}`, images);
+            onRefresh();
+        } catch (error) {
+            alert(`Failed to create post. ${error}`);
+        }
+    };
+
     useEffect(() => {
         fetchMyProfile();
         fetchMyPosts();
@@ -46,12 +61,10 @@ export default function MyProfile() {
 
     if (profileLoading && !refreshing) return <ActivityIndicator />;
 
-    if (error) return <Text>{error}</Text>;
     if (!profile) return <Text>No profile data</Text>;
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-
             <ScrollView
                 style={{ flex: 1 }}
                 contentContainerStyle={{
@@ -92,7 +105,7 @@ export default function MyProfile() {
                         }}
                         onPress={logout}
                     >
-                        <MaterialIcons name="settings" size={20} color="#000" />
+                        <MaterialIcons name="exit-to-app" size={20} color="#000" />
                     </TouchableOpacity>
                 </View>
                 <View
@@ -140,8 +153,11 @@ export default function MyProfile() {
                         </View>
                     </View>
                 </View>
+                <View style={{ marginTop: 16 }}>
+                    <PostCreationCard addNewPost={addPost}></PostCreationCard>
+                </View>
+                <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 12 }}>My Posts</Text>
                 <View style={{ width: '100%' }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 12 }}>My Posts</Text>
                     {postsLoading ? (
                         <ActivityIndicator />
                     ) : (!posts || posts!.length === 0) ? (
@@ -156,5 +172,14 @@ export default function MyProfile() {
                 </View>
             </ScrollView>
         </SafeAreaView>
+    );
+}
+
+export default function MyProfile() {
+    return (
+        <UserDataProvider>
+
+            <MyProfileContent />
+        </UserDataProvider>
     );
 }

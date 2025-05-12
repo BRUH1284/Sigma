@@ -8,3 +8,8 @@ export interface UserPost {
     imageUrls: string[],
     createdAt: Date
 }
+
+export interface Location {
+    latitude: number,
+    longitude: number
+}

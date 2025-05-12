@@ -51,7 +51,7 @@ const CircularProgress: React.FC<Props> = ({
         }}>
             <Svg width={size} height={size}>
                 {rings.map((ring, index) => {
-                    const progress = ring.progress;
+                    const progress = ring.progress <= 1 ? ring.progress : 1;
 
                     const padding = 2;
                     const ringSize = size - index * strokeWidth - padding;

@@ -36,6 +36,12 @@
           "backgroundColor": "#ffffff"
         }
       ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
       "expo-secure-store",
       "expo-font",
       "expo-web-browser",

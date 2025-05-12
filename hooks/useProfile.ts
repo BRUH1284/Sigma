@@ -35,6 +35,10 @@ export function useProfile() {
         }
     };
 
+    const addNewPost = async (content: string, images: { uri: string, type: string, name: string }[]) => {
+        await profileService.addNewPost(content, images);
+    };
+
     return {
         profile,
         posts,
@@ -42,6 +46,7 @@ export function useProfile() {
         postsLoading,
         error,
         fetchMyProfile,
-        fetchMyPosts
+        fetchMyPosts,
+        addNewPost
     };
 }

@@ -120,7 +120,7 @@ export const authService = {
         const { accessToken, refreshToken } = response.data;
         await saveTokens(accessToken, refreshToken);
         const { data: expoPushToken } = await Notifications.getExpoPushTokenAsync();
-        await authService.savePushToken(expoPushToken); 
+        await authService.savePushToken(expoPushToken);
         return response;
     },
 

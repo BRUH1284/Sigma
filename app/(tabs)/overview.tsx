@@ -243,7 +243,7 @@ function OverviewContent() {
                         // { color: COLORS.success, progress: 0 }
                     ]}
                     icons={[
-                        { name: 'local-fire-department', library: 'MaterialIcons' },
+                        { color: monthProgress[index] >= 1 ? colors.text : COLORS.gray, name: 'local-fire-department', library: 'MaterialIcons' },
                         // { name: 'water', library: 'MaterialCommunityIcons' },
                         // { name: 'food-fork-drink', library: 'MaterialCommunityIcons' },
                     ]}
@@ -413,23 +413,3 @@ export default function Overview() {
         </ActivityRecordProvider>
     );
 }
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         justifyContent: 'center',
-//     },
-//     itemContainer: {
-//         flex: 1,
-//         backgroundColor: '#2196F3',
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         borderRadius: 10,
-//         padding: 10, // allows inner content to adapt
-//     },
-//     itemText: {
-//         color: '#fff',
-//         fontSize: 18,
-//         fontWeight: 'bold',
-//     }
-// });
