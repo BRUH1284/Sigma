@@ -1,12 +1,18 @@
+import React from 'react';
+import { View, Dimensions, StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useStyles } from '@/constants/style';
 import { useTheme } from '@/context/ThemeContext';
+import MessengerScreen from '../(messenger)/messenger';
+
+const isTablet = Dimensions.get('window').width >= 700;
 
 export default function TabLayout() {
     const styles = useStyles();
     const { colors } = useTheme();
-    return (
+
+    const tabs = (
         <Tabs
             screenOptions={{
                 headerShown: false,
@@ -39,14 +45,14 @@ export default function TabLayout() {
                 }}
             />
             {/* <Tabs.Screen
-                name='statistics'
-                options={{
-                    tabBarLabel: "Statistics",
-                    tabBarIcon: ({ size, color }) => (
-                        <MaterialIcons name="bar-chart" size={size} color={color} />
-                    )
-                }}
-            /> */}
+        name='statistics'
+        options={{
+          tabBarLabel: "Statistics",
+          tabBarIcon: ({ size, color }) => (
+            <MaterialIcons name="bar-chart" size={size} color={color} />
+          )
+        }}
+      /> */}
             <Tabs.Screen
                 name='profile'
                 options={{
@@ -58,4 +64,35 @@ export default function TabLayout() {
             />
         </Tabs>
     );
+
+    // 👉 если планшет — оборачиваем в два столбца
+    if (isTablet) {
+        return (
+            <View style={tabletStyles.container}>
+                <View style={tabletStyles.sidebar}>
+                    <MessengerScreen />
+                </View>
+                <View style={tabletStyles.content}>
+                    {tabs}
+                </View>
+            </View>
+        );
+    }
+
+    return tabs;
 }
+
+const tabletStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'row',
+    },
+    sidebar: {
+        width: '35%',
+        borderRightWidth: 1,
+        borderColor: '#ddd',
+    },
+    content: {
+        flex: 1,
+    },
+});

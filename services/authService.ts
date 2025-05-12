@@ -3,6 +3,7 @@ import * as Application from 'expo-application';
 import { api } from '@/api/api';
 import { AxiosError } from 'axios';
 import signalR, { HubConnectionBuilder } from '@microsoft/signalr';
+import * as Notifications from 'expo-notifications';
 
 const ACCESS_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_ACCESS_TOKEN_KEY!;
 const REFRESH_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_REFRESH_TOKEN_KEY!;
@@ -118,6 +119,8 @@ export const authService = {
 
         const { accessToken, refreshToken } = response.data;
         await saveTokens(accessToken, refreshToken);
+        const { data: expoPushToken } = await Notifications.getExpoPushTokenAsync();
+        await authService.savePushToken(expoPushToken); 
         return response;
     },
 
@@ -129,6 +132,9 @@ export const authService = {
         });
         const { accessToken, refreshToken } = response.data;
         await saveTokens(accessToken, refreshToken);
+
+        const { data: expoPushToken } = await Notifications.getExpoPushTokenAsync();
+        await authService.savePushToken(expoPushToken);
         return response;
     },
 
@@ -152,6 +158,14 @@ export const authService = {
 
         await clearTokens();
     },
+
+    async savePushToken(expoPushToken: string) {
+        if (!accessToken) return;
+        await api.post('/notifications/token', {
+            token: expoPushToken
+        });
+    },
+
 
     loadStoredTokens,
     clearTokens
