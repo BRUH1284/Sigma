@@ -87,16 +87,43 @@ export default function MessengerScreen() {
   );
 
 
-  if (chats.length === 0) {
-    return <Text style={{ textAlign: 'center', marginTop: 30 }}>Нет чатов</Text>;
+  // if (chats.length === 0) {
+  //   return <Text style={{ textAlign: 'center', marginTop: 30 }}>Нет чатов</Text>;
+  // }
+
+  // return (
+  //   <FlatList
+  //     data={chats}
+  //     keyExtractor={(chat) => `${chat.username}-${chat.sentAt}`}
+  //     renderItem={renderItem}
+  //   />
+  // );
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
   }
 
   return (
-    <FlatList
-      data={chats}
-      keyExtractor={(chat) => `${chat.username}-${chat.sentAt}`}
-      renderItem={renderItem}
-    />
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.newMessageButton}
+        onPress={() => router.push('/(messenger)/search')}
+      >
+        <Text style={styles.newMessageButtonText}>New Message</Text>
+      </TouchableOpacity>
+      {chats.length === 0 ? (
+        <Text style={styles.emptyText}>Нет чатов</Text>
+      ) : (
+        <FlatList
+          data={chats}
+          keyExtractor={(chat) => `${chat.username}-${chat.sentAt}`}
+          renderItem={renderItem}
+        />
+      )}
+    </View>
   );
 }
 
@@ -114,6 +141,34 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 14,
+    color: '#555',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  newMessageButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    margin: 10,
+    alignSelf: 'flex-end',
+  },
+  newMessageButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 30,
+    fontSize: 16,
     color: '#555',
   },
 });
