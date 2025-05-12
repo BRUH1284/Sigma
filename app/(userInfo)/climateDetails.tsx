@@ -4,10 +4,12 @@ import { UserClimate } from '@/types/registrationTypes';
 import { Stack, useRouter } from 'expo-router';
 import { useRegistration } from '@/hooks/useRegistration';
 import DropdownField from '@/components/DropdownField';
-import { STYLES } from '@/constants/style';
+// import { STYLES } from '@/constants/style';
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 import TextButton from '@/components/TextButton';
 import CircularProgress from '@/components/CircularProgress';
-import { COLORS } from '@/constants/theme';
+// import { COLORS } from '@/constants/theme';
 
 export default function ClimateDetails() {
     const router = useRouter();
@@ -31,16 +33,19 @@ export default function ClimateDetails() {
         { label: 'Cold', value: UserClimate.Cold },
     ];
 
+    const styles = useStyles();
+    const { colors } = useTheme();
+
 
     return (
         <>
             <Stack.Screen options={{ title: 'Environment' }} />
-            <View style={STYLES.container}>
+            <View style={styles.container}>
                 <CircularProgress
                     size={128}
                     strokeWidth={12}
                     rings={[
-                        { color: COLORS.primary, progress: 0.5, progressStart: 0.25 }
+                        { color: colors.primary, progress: 0.5, progressStart: 0.25 }
                     ]}
                     icons={[
                         { name: 'cloud-queue', library: 'MaterialIcons' }
@@ -53,7 +58,7 @@ export default function ClimateDetails() {
                     onChangeValue={(val) => updateField('userClimate', val)}
                 />
 
-                <View style={[STYLES.container, {
+                <View style={[styles.container, {
                     height: "auto",
                     alignSelf: "stretch",
                     justifyContent: 'flex-end',

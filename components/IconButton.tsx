@@ -1,6 +1,8 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, ViewStyle } from "react-native";
 import DynamicIcon, { IconItem } from "./DynamicIcon";
+import { useTheme } from '@/context/ThemeContext';
+import { useStyles } from '@/constants/style';
 import { COLORS } from "@/constants/theme";
 
 export type Props = {
@@ -10,15 +12,25 @@ export type Props = {
 };
 
 export default function IconButton({ icon, onPress, style }: Props) {
+    const styles = useStyles();
+    const { colors } = useTheme();
+
     return (
         <TouchableOpacity
-            style={[styles.button, style]}
+            style={{
+                aspectRatio: 1,
+                borderRadius: 1000,
+                backgroundColor: colors.primary,
+                justifyContent: "center",
+                alignItems: "center",
+                alignSelf: "flex-start",
+            }}
             onPress={onPress}
         >
             <DynamicIcon
                 name={icon.name}
                 size={icon.size}
-                color={icon.color || COLORS.onSurface}
+                color={icon.color || colors.onSurface}
                 library={icon.library}
                 style={{ marginHorizontal: 4 }}
             />
@@ -26,13 +38,13 @@ export default function IconButton({ icon, onPress, style }: Props) {
     );
 }
 
-const styles = StyleSheet.create({
-    button: {
-        aspectRatio: 1,
-        borderRadius: 1000,
-        backgroundColor: COLORS.primary,
-        justifyContent: "center",
-        alignItems: "center",
-        alignSelf: "flex-start",
-    },
-});
+// const styles = StyleSheet.create({
+//     button: {
+//         aspectRatio: 1,
+//         borderRadius: 1000,
+//         backgroundColor: COLORS.primary,
+//         justifyContent: "center",
+//         alignItems: "center",
+//         alignSelf: "flex-start",
+//     },
+// });

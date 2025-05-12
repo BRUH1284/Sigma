@@ -1,5 +1,7 @@
-import { STYLES } from "@/constants/style";
-import { COLORS } from "@/constants/theme";
+// import { STYLES } from "@/constants/style";
+// import { COLORS } from "@/constants/theme";
+import { useTheme } from '@/context/ThemeContext';
+import { useStyles } from '@/constants/style';
 import { View, Text } from "react-native";
 import IconButton from "./IconButton";
 
@@ -12,6 +14,9 @@ type Props = {
 };
 
 export default function ActivityRowSummary({ text, minutes, kcal, onDelete }: Props) {
+    const styles = useStyles();
+    const { colors } = useTheme();
+
     return (
         <View style={{
             flexDirection: 'row',
@@ -19,13 +24,13 @@ export default function ActivityRowSummary({ text, minutes, kcal, onDelete }: Pr
             width: '100%',
             gap: 8,
         }}>
-            <Text style={[STYLES.header, {
+            <Text style={[styles.header, {
                 flex: 1
             }]}>{text}</Text>
             <View
                 style={{
                     width: 1,
-                    backgroundColor: COLORS.lightGray,
+                    backgroundColor: colors.lightGray,
                     alignSelf: 'stretch',
                 }}
             />
@@ -33,16 +38,16 @@ export default function ActivityRowSummary({ text, minutes, kcal, onDelete }: Pr
                 alignItems: 'center',
                 width: 64
             }}>
-                <Text style={STYLES.header}>{minutes}</Text>
-                <Text style={[STYLES.text, { color: COLORS.gray }]}>Minutes</Text>
+                <Text style={styles.header}>{minutes}</Text>
+                <Text style={[styles.text, { color: colors.gray }]}>Minutes</Text>
             </View>
             <View style={{ alignItems: 'center', width: 64 }}>
-                <Text style={STYLES.header}>{kcal}</Text>
-                <Text style={[STYLES.text, { color: COLORS.gray }]}>Kcal</Text>
+                <Text style={styles.header}>{kcal}</Text>
+                <Text style={[styles.text, { color: colors.gray }]}>Kcal</Text>
             </View>
             <IconButton
                 style={{
-                    backgroundColor: COLORS.danger,
+                    backgroundColor: colors.danger,
                     alignSelf: 'center',
                 }}
                 icon={{

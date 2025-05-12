@@ -1,5 +1,7 @@
-import { STYLES } from "@/constants/style";
-import { COLORS } from "@/constants/theme";
+// import { STYLES } from "@/constants/style";
+// import { COLORS } from "@/constants/theme";
+import { useTheme } from '@/context/ThemeContext';
+import { useStyles } from '@/constants/style';
 import { UserPost } from "@/types/postTypes";
 import { useState } from "react";
 import { View, Image, Text, StyleSheet, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
@@ -51,9 +53,23 @@ const PostCard: React.FC<Props> = ({
         );
     };
 
+    const styles = useStyles();
+    const { colors } = useTheme();
+
+
     return (
-        <View style={styles.container}>
-            <View style={styles.headerContainer}>
+        <View style={{
+            backgroundColor: colors.surface,
+            elevation: 4,
+            borderRadius: 24,
+            padding: 2
+        }}>
+            <View style={{
+                margin: 8,
+                flexDirection: 'row',
+                alignItems: 'center',
+                flexWrap: 'wrap'
+            }}>
                 <View style={{
                     flexDirection: 'row',
                     gap: 16,
@@ -71,7 +87,7 @@ const PostCard: React.FC<Props> = ({
                                 ? { uri: post.author.profilePictureUrl }
                                 : require('@/assets/images/default-avatar.png')
                         } />
-                    <Text style={[STYLES.text, {
+                    <Text style={[styles.text, {
                         flexShrink: 1,
                         flexWrap: 'wrap'
                     }]}>
@@ -79,11 +95,11 @@ const PostCard: React.FC<Props> = ({
                     </Text>
                 </View>
 
-                <Text style={[STYLES.text,
+                <Text style={[styles.text,
                 {
                     marginLeft: 'auto',
                     flexShrink: 0,
-                    color: COLORS.onSurface
+                    color: colors.onSurface
                 }]}>
                     {new Date(post.createdAt).toLocaleString('en-US', {
                         day: 'numeric',
@@ -96,20 +112,31 @@ const PostCard: React.FC<Props> = ({
             </View>
             <View style={{ gap: 2 }}>
                 {firstRow.length > 0 && (
-                    <View style={styles.imagesRow}>
+                    <View style={{
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        columnGap: 2
+                    }}>
                         {firstRow.map((url, index) => (
                             <TouchableOpacity
                                 key={`first-${index}`}
                                 style={[
                                     firstRow.length === 1
-                                        ? styles.singleImage
-                                        : styles.multipleImages
+                                        ? {flexGrow: 1,
+                                            maxHeight: 256,
+                                            height: 1,
+                                            aspectRatio: 16 / 9,}
+                                        : {flexGrow: 1, height: 1, aspectRatio: 1,}
                                 ]}
                                 onPress={() => openImage(index)}
                             >
                                 <Image
                                     source={{ uri: url }}
-                                    style={styles.image}
+                                    style={{
+                                        borderRadius: 4,
+                                        height: '100%',
+                                        width: '100%'
+                                    }}
                                     resizeMode='cover'
                                 />
                             </TouchableOpacity>
@@ -117,21 +144,46 @@ const PostCard: React.FC<Props> = ({
                     </View>
                 )}
                 {secondRow.length > 0 && (
-                    <View style={styles.imagesRow}>
+                    <View style={{
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        columnGap: 2
+                    }}>
                         {secondRow.slice(0, 5).map((url, index) => (
                             <TouchableOpacity
                                 key={`second-${index}`}
-                                style={styles.multipleImages}
+                                style={{
+                                    flexGrow: 1,
+                                    height: 1,
+                                    aspectRatio: 1,
+                                }}
                                 onPress={() => openImage(firstRow.length + index)}
                             >
                                 <Image
                                     source={{ uri: url }}
-                                    style={styles.image}
+                                    style={{
+                                        borderRadius: 4,
+                                        height: '100%',
+                                        width: '100%'
+                                    }}
                                     resizeMode="cover"
                                 />
                                 {index === 4 && secondRow.length > 5 && (
-                                    <View style={styles.remainingImagesOverlay}>
-                                        <Text style={styles.remainingImagesText}>+{secondRow.length - 5}</Text>
+                                    <View style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        backgroundColor: 'rgba(0,0,0,0.5)',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                    }}>
+                                        <Text style={{
+                                            color: 'white',
+                                            fontSize: 24,
+                                            fontWeight: 'bold',
+                                        }}>+{secondRow.length - 5}</Text>
                                     </View>
                                 )}
                             </TouchableOpacity>
@@ -139,8 +191,8 @@ const PostCard: React.FC<Props> = ({
                     </View>
                 )}
             </View>
-            <View style={styles.contentContainer}>
-                <Text style={STYLES.text}>{post.content}</Text>
+            <View style={{padding: 14}}>
+                <Text style={styles.text}>{post.content}</Text>
             </View>
 
             <Modal
@@ -149,28 +201,47 @@ const PostCard: React.FC<Props> = ({
                 onRequestClose={() => setModalVisible(false)}
             >
                 <TouchableOpacity
-                    style={styles.modalContainer}
+                    style={{
+                        flex: 1,
+                        backgroundColor: 'rgba(0,0,0,0.9)',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
                     activeOpacity={1}
                     onPress={() => setModalVisible(false)}
                 >
                     {imageLoading && (
                         <ActivityIndicator
                             size="large"
-                            color={COLORS.onSurface}
-                            style={styles.loadingIndicator}
+                            color={colors.onSurface}
+                            style={{
+                                position: 'absolute',
+                                zIndex: 2,
+                            }}
                         />
                     )}
                     <Image
                         source={{ uri: allImages[selectedImageIndex] }}
-                        style={styles.fullImage}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                        }}
                         resizeMode="contain"
                         onLoad={() => setImageLoading(false)}
                         onError={() => setImageLoading(false)}
                     />
 
-                    <View style={styles.navigationContainer}>
+                    <View style={{
+                        position: 'absolute',
+                        bottom: 40,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        paddingHorizontal: 20,
+                    }}>
                         <TouchableOpacity
-                            style={styles.navButton}
+                            style={{zIndex: 1,}}
                             onPress={(e) => {
                                 e.stopPropagation();
                                 goToPrevImage();
@@ -179,14 +250,23 @@ const PostCard: React.FC<Props> = ({
                             <Ionicons name="chevron-back" size={32} color="white" />
                         </TouchableOpacity>
 
-                        <View style={styles.counterContainer}>
-                            <Text style={styles.counterText}>
+                        <View style={{
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            borderRadius: 20,
+                            paddingHorizontal: 15,
+                            paddingVertical: 5,
+                        }}>
+                            <Text style={{
+                                color: 'white',
+                                fontSize: 16,
+                                lineHeight: 32
+                            }}>
                                 {selectedImageIndex + 1} / {allImages.length}
                             </Text>
                         </View>
 
                         <TouchableOpacity
-                            style={styles.navButton}
+                            style={{zIndex: 1,}}
                             onPress={(e) => {
                                 e.stopPropagation();
                                 goToNextImage();
@@ -201,110 +281,110 @@ const PostCard: React.FC<Props> = ({
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        backgroundColor: COLORS.surface,
-        elevation: 4,
-        borderRadius: 24,
-        padding: 2
-    },
-    headerContainer: {
-        margin: 8,
-        flexDirection: 'row',
-        alignItems: 'center',
-        flexWrap: 'wrap'
-    },
-    contentContainer: {
-        padding: 14
-    },
-    imagesRow: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        columnGap: 2
-    },
-    image: {
-        borderRadius: 4,
-        height: '100%',
-        width: '100%'
-    },
-    singleImage: {
-        flexGrow: 1,
-        maxHeight: 256,
-        height: 1,
-        aspectRatio: 16 / 9,
-    },
-    multipleImages: {
-        flexGrow: 1,
-        height: 1,
-        aspectRatio: 1,
-    },
-    timestamp: {
-        fontSize: 12,
-        color: '#888',
-    },
-    modalContainer: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.9)',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    fullImage: {
-        width: '100%',
-        height: '100%',
-    },
-    navButton: {
-        zIndex: 1,
-    },
-    imageCounter: {
-        flexDirection: 'row',
-        gap: 16,
-        position: 'absolute',
-        bottom: 64,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-        borderRadius: 20,
-        zIndex: 1
-    },
-    counterText: {
-        color: 'white',
-        fontSize: 16,
-        lineHeight: 32
-    },
-    remainingImagesOverlay: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    remainingImagesText: {
-        color: 'white',
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    loadingIndicator: {
-        position: 'absolute',
-        zIndex: 2,
-    },
-    counterContainer: {
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        borderRadius: 20,
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-    },
-    navigationContainer: {
-        position: 'absolute',
-        bottom: 40,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        paddingHorizontal: 20,
-    },
-});
+// const styles = StyleSheet.create({
+//     container: {
+//         backgroundColor: COLORS.surface,
+//         elevation: 4,
+//         borderRadius: 24,
+//         padding: 2
+//     },
+//     headerContainer: {
+//         margin: 8,
+//         flexDirection: 'row',
+//         alignItems: 'center',
+//         flexWrap: 'wrap'
+//     },
+//     contentContainer: {
+//         padding: 14
+//     },
+//     imagesRow: {
+//         flexDirection: 'row',
+//         flexWrap: 'wrap',
+//         columnGap: 2
+//     },
+//     image: {
+//         borderRadius: 4,
+//         height: '100%',
+//         width: '100%'
+//     },
+//     singleImage: {
+//         flexGrow: 1,
+//         maxHeight: 256,
+//         height: 1,
+//         aspectRatio: 16 / 9,
+//     },
+//     multipleImages: {
+//         flexGrow: 1,
+//         height: 1,
+//         aspectRatio: 1,
+//     },
+//     timestamp: {
+//         fontSize: 12,
+//         color: '#888',
+//     },
+//     modalContainer: {
+//         flex: 1,
+//         backgroundColor: 'rgba(0,0,0,0.9)',
+//         justifyContent: 'center',
+//         alignItems: 'center'
+//     },
+//     fullImage: {
+//         width: '100%',
+//         height: '100%',
+//     },
+//     navButton: {
+//         zIndex: 1,
+//     },
+//     imageCounter: {
+//         flexDirection: 'row',
+//         gap: 16,
+//         position: 'absolute',
+//         bottom: 64,
+//         backgroundColor: 'rgba(0,0,0,0.5)',
+//         paddingHorizontal: 15,
+//         paddingVertical: 5,
+//         borderRadius: 20,
+//         zIndex: 1
+//     },
+//     counterText: {
+//         color: 'white',
+//         fontSize: 16,
+//         lineHeight: 32
+//     },
+//     remainingImagesOverlay: {
+//         position: 'absolute',
+//         top: 0,
+//         left: 0,
+//         right: 0,
+//         bottom: 0,
+//         backgroundColor: 'rgba(0,0,0,0.5)',
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//     },
+//     remainingImagesText: {
+//         color: 'white',
+//         fontSize: 24,
+//         fontWeight: 'bold',
+//     },
+//     loadingIndicator: {
+//         position: 'absolute',
+//         zIndex: 2,
+//     },
+//     counterContainer: {
+//         backgroundColor: 'rgba(0,0,0,0.5)',
+//         borderRadius: 20,
+//         paddingHorizontal: 15,
+//         paddingVertical: 5,
+//     },
+//     navigationContainer: {
+//         position: 'absolute',
+//         bottom: 40,
+//         flexDirection: 'row',
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//         width: '100%',
+//         paddingHorizontal: 20,
+//     },
+// });
 
 export default PostCard;

@@ -1,7 +1,9 @@
 import { View, Text, StyleSheet, TextInput, ViewStyle } from "react-native";
 import IconButton from "./IconButton";
 import { IconItem } from "./DynamicIcon";
-import { COLORS } from "@/constants/theme";
+// import { COLORS } from "@/constants/theme";
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -28,6 +30,8 @@ export default function NumberInputField({
     minValue = 0,
     minWidth = 48
 }: Props) {
+    const styles = useStyles();
+    const { colors } = useTheme();
     const [displayedValue, setDisplayedValue] = useState('');
 
     const handleChangeValue = (value: string | number) => {
@@ -53,13 +57,23 @@ export default function NumberInputField({
 
         onChangeNumber?.(parsed);
         setDisplayedValue(parsed.toString());
+
     }
 
     return (
-        <View style={styles.container}>
+        <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+        }}>
             <IconButton icon={decrementIcon} onPress={() => handleChangeValue(value - valueJump)} />
             <TextInput
-                style={[styles.input, { minWidth: minWidth }]}
+                style={[{textAlign: "center",
+                        fontSize: 16,
+                        paddingVertical: 4,
+                        paddingHorizontal: 8,
+                        borderBottomWidth: 1,
+                        borderColor: colors.lightGray,}, { minWidth: minWidth }]}
                 keyboardType="numeric"
                 value={displayedValue}
                 placeholder={placeholder}
@@ -70,18 +84,18 @@ export default function NumberInputField({
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-    },
-    input: {
-        textAlign: "center",
-        fontSize: 16,
-        paddingVertical: 4,
-        paddingHorizontal: 8,
-        borderBottomWidth: 1,
-        borderColor: COLORS.lightGray,
-    },
-});
+// const styles = StyleSheet.create({
+//     container: {
+//         flexDirection: "row",
+//         alignItems: "center",
+//         gap: 12,
+//     },
+//     input: {
+//         textAlign: "center",
+//         fontSize: 16,
+//         paddingVertical: 4,
+//         paddingHorizontal: 8,
+//         borderBottomWidth: 1,
+//         borderColor: COLORS.lightGray,
+//     },
+// });

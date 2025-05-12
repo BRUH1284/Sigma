@@ -1,7 +1,9 @@
 import { TextInput, View, Text, StyleSheet, KeyboardTypeOptions } from 'react-native';
 import React from 'react';
-import { STYLES } from '@/constants/style';
-import { COLORS } from '@/constants/theme';
+// import { STYLES } from '@/constants/style';
+// import { COLORS } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
+import { useStyles } from '@/constants/style';
 import DynamicIcon, { IconItem } from "./DynamicIcon";
 
 type Props = {
@@ -16,6 +18,7 @@ type Props = {
     icon?: IconItem;
 };
 
+
 const TextField: React.FC<Props> = ({
     label,
     errorMessage,
@@ -27,15 +30,23 @@ const TextField: React.FC<Props> = ({
     keyboardType = "default",
     icon
 }) => {
+    const styles = useStyles();
+    const { colors } = useTheme();
+
     return (
-        <View style={styles.container}>
+        <View style={{
+            alignSelf: "stretch",
+            alignItems: 'baseline',
+            justifyContent: "center",
+            gap: 4
+        }}>
             {label && <Text style={styles.text}>{label}</Text>}
             <View style={[
-                STYLES.inputWrapper,
-                styles.inputRow,
+                styles.inputWrapper,
+                {flexDirection: "row", alignItems: "center",},
                 errorMessage && errorMessage != "" &&
                 {
-                    borderColor: COLORS.danger
+                    borderColor: colors.danger
                 }
             ]}>
                 {icon && (
@@ -43,13 +54,13 @@ const TextField: React.FC<Props> = ({
                         name={icon.name}
                         size={icon.size}
                         library={icon.library}
-                        color={icon.color || COLORS.gray}
+                        color={icon.color || colors.gray}
                     />
                 )}
                 <TextInput
                     style={{ flex: 1 }}
                     placeholder={placeholder}
-                    placeholderTextColor={COLORS.gray}
+                    placeholderTextColor={colors.gray}
                     secureTextEntry={secureTextEntry}
                     autoCapitalize={autoCapitalize}
                     onChangeText={onChangeText}
@@ -60,7 +71,7 @@ const TextField: React.FC<Props> = ({
             {errorMessage && (<Text style={[
                 styles.text,
                 {
-                    color: COLORS.danger
+                    color: colors.danger
                 }
             ]}>{errorMessage}</Text>
             )}
@@ -71,18 +82,18 @@ const TextField: React.FC<Props> = ({
 export default TextField;
 
 
-const styles = StyleSheet.create({
-    container: {
-        alignSelf: "stretch",
-        alignItems: 'baseline',
-        justifyContent: "center",
-        gap: 4
-    },
-    text: {
-        marginHorizontal: 0
-    },
-    inputRow: {
-        flexDirection: "row",
-        alignItems: "center",
-    }
-});
+// const styles = StyleSheet.create({
+//     container: {
+//         alignSelf: "stretch",
+//         alignItems: 'baseline',
+//         justifyContent: "center",
+//         gap: 4
+//     },
+//     text: {
+//         marginHorizontal: 0
+//     },
+//     inputRow: {
+//         flexDirection: "row",
+//         alignItems: "center",
+//     }
+// });

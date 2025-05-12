@@ -3,7 +3,9 @@ import React, { useState } from 'react'
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from 'expo-router';
 import TextButton from '@/components/TextButton';
-import { STYLES } from '@/constants/style';
+// import { STYLES } from '@/constants/style';
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 import TextField from '@/components/TextField';
 import { useRegistration } from '@/hooks/useRegistration';
 
@@ -16,6 +18,8 @@ export default function Login() {
     const [errorMessage, setErrorMessage] = useState('');
     const [usernameMessage, setUsernameMessage] = useState('');
     const [passwordMessage, setPasswordMessage] = useState('');
+    const styles = useStyles();
+    const { colors } = useTheme();
 
 
     // Handle the change in username field
@@ -68,7 +72,7 @@ export default function Login() {
 
     return (
 
-        <View style={STYLES.container}>
+        <View style={styles.container}>
             <Image
                 style={{
                     alignSelf: "stretch",
@@ -79,7 +83,7 @@ export default function Login() {
                 source={{
                     uri: 'https://i1.sndcdn.com/avatars-IOXJvmseuTNrYtVh-mxzoUg-t240x240.jpg',
                 }}></Image>
-            <Text style={STYLES.title}>Sign in to Sigma</Text>
+            <Text style={styles.title}>Sign in to Sigma</Text>
             <TextField
                 placeholder="Username"
                 errorMessage={usernameMessage}
@@ -94,13 +98,13 @@ export default function Login() {
                 onChangeText={handlePasswordChange}
                 value={password}
             />
-            <View style={[STYLES.container, {
+            <View style={[styles.container, {
                 height: "auto",
                 alignSelf: "stretch",
                 justifyContent: 'flex-end',
                 marginBottom: 48
             }]}>
-                <Text style={STYLES.errorText}>{errorMessage}</Text>
+                <Text style={styles.errorText}>{errorMessage}</Text>
                 <TextButton onPress={login} title="Sign in" />
             </View>
         </View>

@@ -1,12 +1,14 @@
 import { View, Image, Text, Button, ActivityIndicator, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useProfile } from '@/hooks/useProfile';
-import { STYLES } from '@/constants/style';
+// import { STYLES } from '@/constants/style';
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useRegistration } from '@/hooks/useRegistration';
 import PostCard from '@/components/PostCard';
 import { MaterialIcons } from '@expo/vector-icons';
-import { COLORS } from '@/constants/theme';
+// import { COLORS } from '@/constants/theme';
 
 export default function MyProfile() {
     const { profile, posts, profileLoading, postsLoading, error, fetchMyProfile, fetchMyPosts } = useProfile();
@@ -14,6 +16,9 @@ export default function MyProfile() {
     const { checkRegistration } = useRegistration();
 
     const [refreshing, setRefreshing] = useState(false);
+
+    const styles = useStyles();
+    const { colors, toggleTheme, isDark } = useTheme();
 
     const logout = async () => {
         if (!onLogout) {
@@ -59,13 +64,26 @@ export default function MyProfile() {
                 width: '100%',
                 justifyContent: 'space-between'
             }}>
-                <Text style={STYLES.title}>@{profile.userName}</Text>
+                <Text style={styles.title}>@{profile.userName}</Text>
+                <TouchableOpacity
+                  style={{
+                    height: 32,
+                    aspectRatio: 1,
+                    borderRadius: 32,
+                    backgroundColor: colors.gray,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  onPress={toggleTheme}
+                >
+                  <MaterialIcons name={isDark ? "light-mode" : "dark-mode"} size={20} color="#000" />
+                </TouchableOpacity>
                 <TouchableOpacity
                     style={{
                         height: 32,
                         aspectRatio: 1,
                         borderRadius: 32,
-                        backgroundColor: COLORS.gray,
+                        backgroundColor: colors.gray,
                         justifyContent: 'center',
                         alignItems: 'center',
                     }}
@@ -96,22 +114,22 @@ export default function MyProfile() {
                     }
                 />
                 <View style={{ justifyContent: 'center', height: 92 }}>
-                    <Text style={STYLES.text}>{profile.firstName} {profile.lastName}</Text>
+                    <Text style={styles.text}>{profile.firstName} {profile.lastName}</Text>
                     <View style={{ flexDirection: 'row', gap: 16 }}>
                         <Text>
-                            <Text style={STYLES.text}>{profile.followersCount}{'\n'}</Text>
+                            <Text style={styles.text}>{profile.followersCount}{'\n'}</Text>
                             <Text style={{ textDecorationLine: 'underline' }}>
                                 followers{'\n'}
                             </Text>
                         </Text>
                         <Text>
-                            <Text style={STYLES.text}>{profile.followeeCount}{'\n'}</Text>
+                            <Text style={styles.text}>{profile.followeeCount}{'\n'}</Text>
                             <Text style={{ textDecorationLine: 'underline' }}>
                                 following{'\n'}
                             </Text>
                         </Text>
                         <Text>
-                            <Text style={STYLES.text}>{profile.friendCount}{'\n'}</Text>
+                            <Text style={styles.text}>{profile.friendCount}{'\n'}</Text>
                             <Text style={{ textDecorationLine: 'underline' }}>
                                 friends{'\n'}
                             </Text>

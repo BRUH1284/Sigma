@@ -1,11 +1,13 @@
 import { Image, View, Text, TextInput, Button, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
-import { COLORS } from '@/constants/theme'
+// import { COLORS } from '@/constants/theme'
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from 'expo-router';
 import TextField from '@/components/TextField';
 import TextButton from '@/components/TextButton';
-import { STYLES } from '@/constants/style';
+// import { STYLES } from '@/constants/style';
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Register() {
     const [username, setUsername] = useState('');
@@ -17,6 +19,9 @@ export default function Register() {
     const [usernameMessage, setUsernameMessage] = useState('');
     const [emailMessage, setEmailMessage] = useState('');
     const [passwordMessage, setPasswordMessage] = useState('');
+
+    const styles = useStyles();
+    const { colors } = useTheme();
 
     // Handle the change in username field
     const handleUsernameChange = (newUsername: string) => {
@@ -79,7 +84,7 @@ export default function Register() {
     };
 
     return (
-        <View style={STYLES.container}>
+        <View style={styles.container}>
             <Image
                 style={{
                     alignSelf: "stretch",
@@ -90,7 +95,7 @@ export default function Register() {
                 source={{
                     uri: 'https://i1.sndcdn.com/avatars-IOXJvmseuTNrYtVh-mxzoUg-t240x240.jpg',
                 }}></Image>
-            <Text style={STYLES.title}>Sign up to Sigma</Text>
+            <Text style={styles.title}>Sign up to Sigma</Text>
             <TextField
                 placeholder="Username"
                 errorMessage={usernameMessage}
@@ -112,13 +117,13 @@ export default function Register() {
                 onChangeText={handlePasswordChange}
                 value={password}
             />
-            <View style={[STYLES.container, {
+            <View style={[styles.container, {
                 height: "auto",
                 alignSelf: "stretch",
                 justifyContent: 'flex-end',
                 marginBottom: 48
             }]}>
-                <Text style={STYLES.errorText}>{errorMessage}</Text>
+                <Text style={styles.errorText}>{errorMessage}</Text>
                 <TextButton onPress={register} title="Continue" />
             </View>
         </View>

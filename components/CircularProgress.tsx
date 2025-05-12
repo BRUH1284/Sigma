@@ -7,7 +7,9 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import { MaterialIcons, FontAwesome, Ionicons } from '@expo/vector-icons';
-import { COLORS } from '@/constants/theme';
+// import { COLORS } from '@/constants/theme';
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 
 const iconLibraries = {
     MaterialIcons,
@@ -52,6 +54,8 @@ const CircularProgress: React.FC<Props> = ({
     icons = [],
     iconSize = null,
 }) => {
+    const styles = useStyles();
+    const { colors } = useTheme();
     const iconContainerSize = (size - rings.length * strokeWidth) / 2 * Math.SQRT2;
     iconSize = iconSize || iconContainerSize / Math.ceil(Math.sqrt(icons.length)) * 0.85;;
     return (
@@ -90,7 +94,7 @@ const CircularProgress: React.FC<Props> = ({
                     return (
                         <G key={index} rotation="-90" origin={`${size / 2}, ${size / 2}`}>
                             <Circle
-                                stroke={ring.backgroundColor || COLORS.gray}
+                                stroke={ring.backgroundColor || colors.gray}
                                 fill={fill}
                                 cx={size / 2}
                                 cy={size / 2}
@@ -119,7 +123,14 @@ const CircularProgress: React.FC<Props> = ({
                 })}
             </Svg>
             {/* Center icon */}
-            <View style={[styles.iconContainer, {
+            <View style={[{
+                position: 'absolute',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                top: '50%',
+                left: '50%'
+            }, {
                 width: iconContainerSize,
                 height: iconContainerSize,
                 transform: [
@@ -135,8 +146,8 @@ const CircularProgress: React.FC<Props> = ({
                             key={index}
                             name={icon.name as any}
                             size={iconSize}
-                            color={icon.color || COLORS.onSurface}
-                            style={styles.icon}
+                            color={icon.color || colors.onSurface}
+                            style={{marginHorizontal: 4}}
                         />
                     );
                 })}
@@ -145,23 +156,23 @@ const CircularProgress: React.FC<Props> = ({
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    iconContainer: {
-        position: 'absolute',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        top: '50%',
-        left: '50%'
-    },
-    icon: {
-        marginHorizontal: 4,
-    },
-});
+// const styles = StyleSheet.create({
+//     container: {
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//     },
+//     iconContainer: {
+//         position: 'absolute',
+//         flexDirection: 'row',
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//         top: '50%',
+//         left: '50%'
+//     },
+//     icon: {
+//         marginHorizontal: 4,
+//     },
+// });
 
 
 export default CircularProgress;

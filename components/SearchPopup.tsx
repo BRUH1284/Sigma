@@ -1,5 +1,7 @@
-import { STYLES } from "@/constants/style";
-import { COLORS } from "@/constants/theme";
+// import { STYLES } from "@/constants/style";
+// import { COLORS } from "@/constants/theme";
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 import { View, Text, FlatList, Pressable } from "react-native";
 import IconButton from "./IconButton";
 import TextField from "./TextField";
@@ -28,10 +30,13 @@ export default function SearchPopup({
         const Component = flatListComponent;
         return <Component {...item} />;
     };
+    const styles = useStyles();
+    const { colors } = useTheme();
+
 
     return (
         <Pressable
-            style={STYLES.popup}
+            style={styles.popup}
             onPress={(e) => e.stopPropagation()}
         >
             <View style={{
@@ -41,7 +46,7 @@ export default function SearchPopup({
                 gap: 8,
             }}>
                 <IconButton
-                    style={{ backgroundColor: COLORS.surface }}
+                    style={{ backgroundColor: colors.surface }}
                     icon={{
                         size: 24,
                         name: 'arrow-back',
@@ -50,7 +55,7 @@ export default function SearchPopup({
                     onPress={onBack}
                 />
                 <Text style={[
-                    STYLES.header,
+                    styles.header,
                     {
                         textAlign: 'center',
                         flex: 1

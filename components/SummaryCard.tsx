@@ -1,4 +1,6 @@
-import { STYLES } from "@/constants/style";
+// import { STYLES } from "@/constants/style";
+import { useTheme } from '@/context/ThemeContext';
+import { useStyles } from '@/constants/style';
 import React from "react";
 import { View, Text, FlatList, RefreshControl } from "react-native";
 import IconButton from "./IconButton";
@@ -27,9 +29,12 @@ export default function SummaryCard({
         const Component = flatListComponent;
         return <Component {...item} />;
     };
+    const styles = useStyles();
+    const { colors } = useTheme();
+
 
     return (
-        <View style={[STYLES.card, { gap: 16 }]}>
+        <View style={[styles.card, { gap: 16 }]}>
             <View
                 style={{
                     alignContent: 'space-between',
@@ -39,8 +44,8 @@ export default function SummaryCard({
                     gap: 16,
                 }}
             >
-                <Text style={[STYLES.title, { lineHeight: 32, flex: 1 }]}>{headerText}</Text>
-                <Text style={STYLES.text}>{headerKcal} kcal</Text>
+                <Text style={[styles.title, { lineHeight: 32, flex: 1 }]}>{headerText}</Text>
+                <Text style={styles.text}>{headerKcal} kcal</Text>
                 <IconButton icon={{ size: 32, name: 'add', library: 'MaterialIcons' }} onPress={onHeaderAddButton} />
             </View>
             <FlatList

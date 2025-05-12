@@ -4,12 +4,14 @@ import { useRegistrationStep } from '@/hooks/useRegistrationStep';
 import { ActivityLevel, Gender } from '@/types/registrationTypes';
 import { Stack, useRouter } from 'expo-router';
 import { useRegistration } from '@/hooks/useRegistration';
-import { STYLES } from '@/constants/style';
+// import { STYLES } from '@/constants/style';
 import TextField from '@/components/TextField';
 import DropdownField from '@/components/DropdownField';
 import TextButton from '@/components/TextButton';
 import CircularProgress from '@/components/CircularProgress';
-import { COLORS } from '@/constants/theme';
+// import { COLORS } from '@/constants/theme';
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function PhysicalDetails() {
     const router = useRouter();
@@ -19,6 +21,9 @@ export default function PhysicalDetails() {
 
     const [weightError, setWeightError] = useState('');
     const [heightError, setHeightError] = useState('');
+
+    const styles = useStyles();
+    const { colors } = useTheme();
 
     const handleNext = () => {
         const result = validateStep(1);
@@ -54,12 +59,12 @@ export default function PhysicalDetails() {
     return (
         <>
             <Stack.Screen options={{ title: 'Physical Details' }} />
-            <View style={STYLES.container}>
+            <View style={styles.container}>
                 <CircularProgress
                     size={128}
                     strokeWidth={12}
                     rings={[
-                        { color: COLORS.primary, progress: 0.25 }
+                        { color: colors.primary, progress: 0.25 }
                     ]}
                     icons={[
                         { name: 'body', library: 'Ionicons' }
@@ -94,7 +99,7 @@ export default function PhysicalDetails() {
                     zIndex={1000}
                 />
 
-                <View style={[STYLES.container, {
+                <View style={[styles.container, {
                     height: "auto",
                     alignSelf: "stretch",
                     justifyContent: 'flex-end',

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { STYLES } from '@/constants/style';
-import { COLORS } from '@/constants/theme';
+// import { STYLES } from '@/constants/style';
+// import { COLORS } from '@/constants/theme';
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 
 type Props = {
     label?: string;
@@ -18,14 +20,19 @@ const DropdownField: React.FC<Props> = ({ label, errorMessage = "", items, place
     const [open, setOpen] = useState(false);
     const [localValue, setLocalValue] = useState(value);
     const [localItems, setLocalItems] = useState(items);
+    const styles = useStyles();
+    const { colors } = useTheme();
 
     return (
-        <View style={[styles.container, { zIndex }]}>
-            {label && <Text style={styles.text}>{label}</Text>}
+        <View style={[{alignSelf: "stretch",
+                        alignItems: 'baseline',
+                        justifyContent: "center",
+                        gap: 4}, { zIndex }]}>
+            {label && <Text style={{marginHorizontal: 16}}>{label}</Text>}
             <View style={[
-                STYLES.dropDownWrapper,
+                styles.dropDownWrapper,
                 { position: 'relative', zIndex },
-                errorMessage !== "" && { borderColor: COLORS.danger }
+                errorMessage !== "" && { borderColor: colors.danger }
             ]}>
                 <DropDownPicker
                     open={open}
@@ -48,11 +55,11 @@ const DropdownField: React.FC<Props> = ({ label, errorMessage = "", items, place
                             elevation: 4,
                             borderRadius: 24,
                             marginVertical: 8,
-                            borderColor: COLORS.background,
+                            borderColor: colors.background,
                         }}
                 />
             </View>
-            <Text style={[styles.text, { color: COLORS.danger }]}>{errorMessage}</Text>
+            <Text style={[{marginHorizontal: 16}, { color: colors.danger }]}>{errorMessage}</Text>
         </View>
 
     );
@@ -60,14 +67,14 @@ const DropdownField: React.FC<Props> = ({ label, errorMessage = "", items, place
 
 export default DropdownField;
 
-const styles = StyleSheet.create({
-    container: {
-        alignSelf: "stretch",
-        alignItems: 'baseline',
-        justifyContent: "center",
-        gap: 4
-    },
-    text: {
-        marginHorizontal: 16
-    },
-});
+// const styles = StyleSheet.create({
+//     container: {
+//         alignSelf: "stretch",
+//         alignItems: 'baseline',
+//         justifyContent: "center",
+//         gap: 4
+//     },
+//     text: {
+//         marginHorizontal: 16
+//     },
+// });

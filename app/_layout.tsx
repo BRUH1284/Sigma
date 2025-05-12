@@ -13,6 +13,8 @@ import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import migrations from '@/drizzle/migrations';
 import { DbDropService } from "@/services/dbDropService";
 import { MessengerProvider } from "@/context/MessengerContext";
+import { ThemeProvider } from "@/context/ThemeContext";
+
 
 const DATABASE_NAME = process.env.DATABASE_NAME || 'sigma';
 
@@ -33,19 +35,20 @@ export default function RootLayout() {
   return (
     <Suspense fallback={<ActivityIndicator size="large" />}>
       <SQLiteProvider databaseName={DATABASE_NAME} options={{ enableChangeListener: true }} useSuspense>
+        <ThemeProvider>
         <AuthProvider>
           <MessengerProvider>
-
-            <RegistrationProvider>
-              <SafeAreaProvider>
-                <SafeAreaView style={{ flex: 1 }}>
-                  <Slot />
-                  <InitialLayout />
-                </SafeAreaView>
-              </SafeAreaProvider>
-            </RegistrationProvider>
-          </MessengerProvider>
-        </AuthProvider>
+              <RegistrationProvider>
+                <SafeAreaProvider>
+                  <SafeAreaView style={{ flex: 1 }}>
+                  < Slot />
+                    <InitialLayout />
+                  </SafeAreaView>
+                </SafeAreaProvider>
+              </RegistrationProvider>
+            </MessengerProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </SQLiteProvider>
     </Suspense>
   );

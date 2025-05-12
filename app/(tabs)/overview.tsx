@@ -7,8 +7,10 @@ import NumberInputField from '@/components/NumberInputField';
 import NumberPopup from '@/components/NumberPopup';
 import SearchPopup from '@/components/SearchPopup';
 import SummaryCard from '@/components/SummaryCard';
-import { STYLES } from '@/constants/style';
-import { COLORS } from '@/constants/theme';
+// import { STYLES } from '@/constants/style';
+// import { COLORS } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
+import { useStyles } from '@/constants/style';
 import { ActivityProvider } from '@/context/ActivityContext';
 import { ActivityRecordProvider } from '@/context/ActivityRecordContext';
 import { UserActivityProvider } from '@/context/UserActivityContext';
@@ -68,6 +70,9 @@ function OverviewContent() {
     const [search, setSearch] = useState("");
     const [minutes, setMinutes] = useState(0);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const styles = useStyles();
+    const { colors } = useTheme();
+
 
     const syncRecords = async () => {
         setIsRefreshing(true);
@@ -184,7 +189,7 @@ function OverviewContent() {
 
     const scrollX = useRef(new Animated.Value(0)).current;
     return (
-        <View style={[STYLES.container]}>
+        <View style={[styles.container]}>
             <View style={{ height: ITEM_SIZE }}>
                 <Animated.FlatList
                     data={data}
@@ -215,8 +220,21 @@ function OverviewContent() {
 
                         return (
                             <View style={{ width: ITEM_SIZE, height: ITEM_SIZE }}>
-                                <Animated.View style={[styles.itemContainer, { transform: [{ scale }] }]}>
-                                    <Text style={styles.itemText}>{item.title}</Text>
+                                <Animated.View style={{
+                                    flex: 1,
+                                    backgroundColor: '#2196F3',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    borderRadius: 10,
+                                    padding: 10, 
+                                    transform: [{ scale }], 
+                                    }}
+                                >
+                                    <Text style={{
+                                        color: '#fff',
+                                        fontSize: 18,
+                                        fontWeight: 'bold',
+                                    }}>{item.title}</Text>
                                 </Animated.View>
                             </View>
                         );
@@ -278,7 +296,7 @@ function OverviewContent() {
                 animationType="fade"
                 onRequestClose={closeModal}
             >
-                <Pressable style={STYLES.overlay} onPress={closeModal}>
+                <Pressable style={styles.overlay} onPress={closeModal}>
                     {!selectedActivity && (
                         <SearchPopup
                             headerText='Add'
@@ -329,22 +347,22 @@ export default function Overview() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    itemContainer: {
-        flex: 1,
-        backgroundColor: '#2196F3',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-        padding: 10, // allows inner content to adapt
-    },
-    itemText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    }
-});
+// const styles = StyleSheet.create({
+//     container: {
+//         flex: 1,
+//         justifyContent: 'center',
+//     },
+//     itemContainer: {
+//         flex: 1,
+//         backgroundColor: '#2196F3',
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//         borderRadius: 10,
+//         padding: 10, // allows inner content to adapt
+//     },
+//     itemText: {
+//         color: '#fff',
+//         fontSize: 18,
+//         fontWeight: 'bold',
+//     }
+// });

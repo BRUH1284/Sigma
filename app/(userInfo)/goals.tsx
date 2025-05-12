@@ -4,12 +4,14 @@ import { useRegistrationStep } from '@/hooks/useRegistrationStep';
 import { Goal } from '@/types/registrationTypes';
 import { Stack, useRouter } from 'expo-router';
 import { useRegistration } from '@/hooks/useRegistration';
-import { STYLES } from '@/constants/style';
+// import { STYLES } from '@/constants/style';
 import TextButton from '@/components/TextButton';
 import DropdownField from '@/components/DropdownField';
 import TextField from '@/components/TextField';
 import CircularProgress from '@/components/CircularProgress';
-import { COLORS } from '@/constants/theme';
+// import { COLORS } from '@/constants/theme';
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function PhysicalDetails() {
     const router = useRouter();
@@ -18,6 +20,9 @@ export default function PhysicalDetails() {
     const { validateStep } = useRegistrationStep(registrationData);
 
     const [weightError, setWeightError] = useState('');
+
+    const styles = useStyles();
+    const { colors } = useTheme();
 
     const handleNext = async () => {
         const result = validateStep(3);
@@ -48,12 +53,12 @@ export default function PhysicalDetails() {
     return (
         <>
             <Stack.Screen options={{ title: 'Goals' }} />
-            <View style={STYLES.container}>
+            <View style={styles.container}>
                 <CircularProgress
                     size={128}
                     strokeWidth={12}
                     rings={[
-                        { color: COLORS.primary, progress: 0.75, progressStart: 0.5 }
+                        { color: colors.primary, progress: 0.75, progressStart: 0.5 }
                     ]}
                     icons={[{ name: 'flag', library: 'MaterialIcons' }]}
                 />
@@ -71,7 +76,7 @@ export default function PhysicalDetails() {
                     onChangeValue={(val) => updateField('goal', val)}
                 />
 
-                <View style={[STYLES.container, {
+                <View style={[styles.container, {
                     height: "auto",
                     alignSelf: "stretch",
                     justifyContent: 'flex-end',
@@ -84,21 +89,21 @@ export default function PhysicalDetails() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 8,
-        marginBottom: 10,
-    },
-    dropdown: {
-        marginBottom: 10,
-    },
-    error: {
-        color: 'red',
-        marginBottom: 10,
-    },
-});
+// const styles = StyleSheet.create({
+//     container: {
+//         padding: 20,
+//     },
+//     input: {
+//         borderWidth: 1,
+//         borderColor: '#ccc',
+//         padding: 8,
+//         marginBottom: 10,
+//     },
+//     dropdown: {
+//         marginBottom: 10,
+//     },
+//     error: {
+//         color: 'red',
+//         marginBottom: 10,
+//     },
+// });

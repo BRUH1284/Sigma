@@ -1,5 +1,7 @@
-import { STYLES } from "@/constants/style";
-import { COLORS } from "@/constants/theme";
+// import { STYLES } from "@/constants/style";
+// import { COLORS } from "@/constants/theme";
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 import { View, Text, Pressable } from "react-native";
 import IconButton from "./IconButton";
 import NumberInputField from "./NumberInputField";
@@ -34,9 +36,11 @@ export default function NumberPopup({
     minValue,
     minWidth
 }: Props) {
+    const styles = useStyles();
+    const { colors } = useTheme();
     return (
         <Pressable
-            style={STYLES.popup}
+            style={styles.popup}
             onPress={(e) => e.stopPropagation()}
         >
             <View style={{
@@ -49,7 +53,7 @@ export default function NumberPopup({
                 <IconButton
                     style={{
                         position: 'absolute',
-                        backgroundColor: COLORS.surface
+                        backgroundColor: colors.surface
                     }}
                     icon={{
                         size: 24,
@@ -59,7 +63,7 @@ export default function NumberPopup({
                     onPress={onBack}
                 />
                 <Text
-                    style={[STYLES.header, {
+                    style={[styles.header, {
                         textAlign: 'center',
                         flex: 1,
                         zIndex: -1
@@ -67,7 +71,7 @@ export default function NumberPopup({
                     numberOfLines={2}
                 >{headerText}</Text>
             </View>
-            <Text style={[STYLES.text, { width: '100%', textAlign: 'center' }]}>{text}</Text>
+            <Text style={[styles.text, { width: '100%', textAlign: 'center' }]}>{text}</Text>
             <NumberInputField
                 value={value}
                 onChangeNumber={onChangeNumber}
@@ -84,7 +88,7 @@ export default function NumberPopup({
                 justifyContent: 'flex-end',
                 gap: 8,
             }}>
-                <Text style={[STYLES.text, { fontSize: 16 }]}>{acceptText}</Text>
+                <Text style={[styles.text, { fontSize: 16 }]}>{acceptText}</Text>
                 <IconButton
                     icon={{
                         size: 32,

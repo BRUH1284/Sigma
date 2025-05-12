@@ -1,7 +1,10 @@
 import { Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { COLORS } from '@/constants/theme'
-import { STYLES } from '@/constants/style';
+// import { COLORS } from '@/constants/theme'
+// import { STYLES } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
+import { useStyles } from '@/constants/style';
+
 import DynamicIcon, { IconItem } from './DynamicIcon';
 
 type Props = {
@@ -12,12 +15,15 @@ type Props = {
 }
 
 export default function GoalCard({ current, goal, icon, onPress }: Props) {
+    const styles = useStyles();
+    const { colors } = useTheme();
+
     return (
         <TouchableOpacity
             style={[
-                STYLES.button,
+                styles.button,
                 {
-                    backgroundColor: COLORS.secondSurface,
+                    backgroundColor: colors.secondSurface,
                     flex: 1,
                     height: '100%',
                     flexDirection: 'row',
@@ -30,13 +36,13 @@ export default function GoalCard({ current, goal, icon, onPress }: Props) {
             <DynamicIcon
                 name={icon.name}
                 size={icon.size}
-                color={icon.color || COLORS.onSurface}
+                color={icon.color || colors.onSurface}
                 library={icon.library}
                 style={icon.style}
             />
             <View style={{ alignItems: 'flex-end' }}>
-                <Text style={STYLES.header}>{current}</Text>
-                <Text style={[STYLES.text, { color: COLORS.gray }]}>{goal}</Text>
+                <Text style={styles.header}>{current}</Text>
+                <Text style={[styles.text, { color: colors.gray }]}>{goal}</Text>
             </View>
         </TouchableOpacity>
     )

@@ -18,3 +18,14 @@ export const COLORS = {
     gray: "#626262",
     lightGray: "#ccc"
 }
+
+export const darkColors = {
+  ...COLORS,
+  background: "#121212",
+  surface: "#1e1e1e",
+  secondSurface: "#2a2a2a",
+  thirdSurface: "#3a3a3a",
+  onBackground: "#f5f5f5",
+  onSurface: "#f5f5f5",
+  lightGray: "#999",
+};

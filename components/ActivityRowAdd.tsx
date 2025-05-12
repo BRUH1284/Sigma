@@ -1,4 +1,6 @@
-import { STYLES } from "@/constants/style";
+// import { STYLES } from "@/constants/style";
+import { useTheme } from '@/context/ThemeContext';
+import { useStyles } from '@/constants/style';
 import { View, Text } from "react-native";
 import IconButton from "./IconButton";
 
@@ -10,6 +12,9 @@ type Props = {
 };
 
 export default function ActivityRowAdd({ text, kcal, onAdd }: Props) {
+    const styles = useStyles();
+    const { colors } = useTheme();
+
     return (
         <View
             style={{
@@ -24,7 +29,7 @@ export default function ActivityRowAdd({ text, kcal, onAdd }: Props) {
             <Text style={{
                 flex: 1,
             }}>{text}</Text>
-            <Text style={[STYLES.text, { flexShrink: 0, textAlign: 'center' }]}>{`${kcal}\nkcal/h`}</Text>
+            <Text style={[styles.text, { flexShrink: 0, textAlign: 'center' }]}>{`${kcal}\nkcal/h`}</Text>
             <IconButton
                 style={{ alignSelf: 'center' }}
                 icon={{ size: 24, name: 'add', library: 'MaterialIcons' }}

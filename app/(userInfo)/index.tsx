@@ -1,14 +1,16 @@
 import TextButton from '@/components/TextButton'
 import TextField from '@/components/TextField';
-import { STYLES } from '@/constants/style';
+// import { STYLES } from '@/constants/style';
 import { useRegistration } from '@/hooks/useRegistration';
 import { useRegistrationStep } from '@/hooks/useRegistrationStep';
 import CircularProgress from '@/components/CircularProgress';
 import { Stack, useRouter } from 'expo-router'
 import { useState } from 'react';
 import { View } from 'react-native'
-import { COLORS } from '@/constants/theme';
+// import { COLORS } from '@/constants/theme';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useStyles } from '@/constants/style';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Name() {
     const router = useRouter();
@@ -18,6 +20,9 @@ export default function Name() {
 
     const [nameError, setNameError] = useState('');
     const [lastNameError, setLastNameError] = useState('');
+
+    const styles = useStyles();
+    const { colors } = useTheme();
 
 
     const handleNext = () => {
@@ -41,12 +46,12 @@ export default function Name() {
     return (
         <>
             <Stack.Screen options={{ title: 'Personal Info' }} />
-            <View style={STYLES.container}>
+            <View style={styles.container}>
                 <CircularProgress
                     size={128}
                     strokeWidth={12}
                     rings={[
-                        { color: COLORS.primary, progress: 0 }
+                        { color: colors.primary, progress: 0 }
                     ]}
                     icons={[
                         { name: 'person', library: 'MaterialIcons' }
@@ -64,7 +69,7 @@ export default function Name() {
                     onChangeText={(val: any) => updateField('lastName', val)}
                     value={registrationData.lastName}
                 />
-                <View style={[STYLES.container, {
+                <View style={[styles.container, {
                     height: "auto",
                     alignSelf: "stretch",
                     justifyContent: 'flex-end',
