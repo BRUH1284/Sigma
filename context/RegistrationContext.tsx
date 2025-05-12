@@ -8,6 +8,7 @@ const initialRegistrationData: UserData = {
     lastName: '',
     bio: 'test bio',
     friendsVisible: true,
+    age: 0,
     weight: 0,
     targetWeight: 0,
     height: 0,

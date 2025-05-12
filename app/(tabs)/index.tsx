@@ -5,13 +5,14 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useStyles } from '@/constants/style';
 import { useTheme } from '@/context/ThemeContext';
 import { useRouter } from 'expo-router'
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
     const router = useRouter();
     const styles = useStyles();
     const { colors } = useTheme();
     return (
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <SafeAreaView style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text>Sigma</Text>
             <TouchableOpacity
                 style={{
@@ -26,6 +27,6 @@ export default function Index() {
             >
                 <MaterialIcons name="message" size={20} color="#000" />
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     )
 }

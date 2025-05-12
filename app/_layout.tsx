@@ -36,15 +36,11 @@ export default function RootLayout() {
     <Suspense fallback={<ActivityIndicator size="large" />}>
       <SQLiteProvider databaseName={DATABASE_NAME} options={{ enableChangeListener: true }} useSuspense>
         <ThemeProvider>
-        <AuthProvider>
-          <MessengerProvider>
+          <AuthProvider>
+            <MessengerProvider>
               <RegistrationProvider>
-                <SafeAreaProvider>
-                  <SafeAreaView style={{ flex: 1 }}>
-                  < Slot />
-                    <InitialLayout />
-                  </SafeAreaView>
-                </SafeAreaProvider>
+                < Slot />
+                <InitialLayout />
               </RegistrationProvider>
             </MessengerProvider>
           </AuthProvider>

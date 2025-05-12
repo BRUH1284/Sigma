@@ -1,27 +1,23 @@
-import { Image, View, Text, TextInput, Button, StyleSheet } from 'react-native'
+import { Image, View, Text, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useState } from 'react'
 // import { COLORS } from '@/constants/theme'
 import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from 'expo-router';
 import TextField from '@/components/TextField';
 import TextButton from '@/components/TextButton';
 // import { STYLES } from '@/constants/style';
 import { useStyles } from '@/constants/style';
-import { useTheme } from '@/context/ThemeContext';
 
 export default function Register() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { onRegister } = useAuth();
-    const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
     const [usernameMessage, setUsernameMessage] = useState('');
     const [emailMessage, setEmailMessage] = useState('');
     const [passwordMessage, setPasswordMessage] = useState('');
 
     const styles = useStyles();
-    const { colors } = useTheme();
 
     // Handle the change in username field
     const handleUsernameChange = (newUsername: string) => {
@@ -82,51 +78,54 @@ export default function Register() {
             }
         }
     };
-
     return (
-        <View style={styles.container}>
-            <Image
-                style={{
-                    alignSelf: "stretch",
-                    height: 256,
-                    margin: 32
-                }}
-                resizeMode="contain"
-                source={{
-                    uri: 'https://i1.sndcdn.com/avatars-IOXJvmseuTNrYtVh-mxzoUg-t240x240.jpg',
-                }}></Image>
-            <Text style={styles.title}>Sign up to Sigma</Text>
-            <TextField
-                placeholder="Username"
-                errorMessage={usernameMessage}
-                autoCapitalize="none"
-                onChangeText={handleUsernameChange}
-                value={username}
-            />
-            <TextField
-                placeholder="Email"
-                errorMessage={emailMessage}
-                autoCapitalize="none"
-                onChangeText={handleEmailChange}
-                value={email}
-            />
-            <TextField
-                placeholder="Password"
-                errorMessage={passwordMessage}
-                autoCapitalize="none"
-                onChangeText={handlePasswordChange}
-                value={password}
-            />
-            <View style={[styles.container, {
-                height: "auto",
-                alignSelf: "stretch",
-                justifyContent: 'flex-end',
-                marginBottom: 48
-            }]}>
-                <Text style={styles.errorText}>{errorMessage}</Text>
-                <TextButton onPress={register} title="Continue" />
-            </View>
-        </View>
+        <KeyboardAvoidingView
+            behavior='padding'
+            style={{ flex: 1 }}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <SafeAreaView style={{ flex: 1 }}>
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                        <View style={styles.containerAvoid}>
+                            <Image
+                                style={{
+                                    alignSelf: "stretch",
+                                    height: 256,
+                                    margin: 32
+                                }}
+                                resizeMode="contain"
+                                source={{
+                                    uri: 'https://i1.sndcdn.com/avatars-IOXJvmseuTNrYtVh-mxzoUg-t240x240.jpg',
+                                }}></Image>
+                            <Text style={styles.title}>Sign up to Sigma</Text>
+
+                            <TextField
+                                placeholder="Username"
+                                errorMessage={usernameMessage}
+                                autoCapitalize="none"
+                                onChangeText={handleUsernameChange}
+                                value={username}
+                            />
+                            <TextField
+                                placeholder="Email"
+                                errorMessage={emailMessage}
+                                autoCapitalize="none"
+                                onChangeText={handleEmailChange}
+                                value={email}
+                            />
+                            <TextField
+                                placeholder="Password"
+                                errorMessage={passwordMessage}
+                                autoCapitalize="none"
+                                onChangeText={handlePasswordChange}
+                                value={password}
+                            />
+                            <View style={{ flex: 1 }} />
+                            <TextButton onPress={register} title="Continue" />
+                        </View>
+                    </TouchableWithoutFeedback>
+                </SafeAreaView>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 };
-

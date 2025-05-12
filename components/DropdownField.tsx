@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
-// import { STYLES } from '@/constants/style';
-// import { COLORS } from '@/constants/theme';
+import DropDownPicker, { DropDownDirectionType } from 'react-native-dropdown-picker';
 import { useStyles } from '@/constants/style';
-import { useTheme } from '@/context/ThemeContext';
+import { COLORS } from '@/constants/theme';
+import { useTheme } from '@react-navigation/native';
 
 type Props = {
     label?: string;
     errorMessage?: string;
     items: { label: string; value: any }[];
-    placeholder?: string;
     onChangeValue?: (value: any) => void;
     value?: any;
     zIndex?: number;
+    dropdownDirection?: DropDownDirectionType;
 };
 
-const DropdownField: React.FC<Props> = ({ label, errorMessage = "", items, placeholder, onChangeValue, value, zIndex = 1 }) => {
+const DropdownField: React.FC<Props> = ({
+    label,
+    errorMessage = "",
+    items,
+    onChangeValue,
+    value,
+    zIndex = 1,
+    dropdownDirection = 'DEFAULT'
+}) => {
     const [open, setOpen] = useState(false);
     const [localValue, setLocalValue] = useState(value);
     const [localItems, setLocalItems] = useState(items);
@@ -24,17 +31,21 @@ const DropdownField: React.FC<Props> = ({ label, errorMessage = "", items, place
     const { colors } = useTheme();
 
     return (
-        <View style={[{alignSelf: "stretch",
-                        alignItems: 'baseline',
-                        justifyContent: "center",
-                        gap: 4}, { zIndex }]}>
-            {label && <Text style={{marginHorizontal: 16}}>{label}</Text>}
+        <View style={[{
+            alignSelf: "stretch",
+            alignItems: 'baseline',
+            justifyContent: "center",
+            gap: 4
+        }, { zIndex }]}>
+            {label && <Text style={{ marginHorizontal: 16 }}>{label}</Text>}
             <View style={[
                 styles.dropDownWrapper,
                 { position: 'relative', zIndex },
-                errorMessage !== "" && { borderColor: colors.danger }
+                errorMessage !== "" && { borderColor: COLORS.danger }
             ]}>
                 <DropDownPicker
+                    listMode='SCROLLVIEW'
+                    dropDownDirection={dropdownDirection}
                     open={open}
                     setOpen={setOpen}
                     items={localItems}
@@ -59,7 +70,7 @@ const DropdownField: React.FC<Props> = ({ label, errorMessage = "", items, place
                         }}
                 />
             </View>
-            <Text style={[{marginHorizontal: 16}, { color: colors.danger }]}>{errorMessage}</Text>
+            <Text style={[{ marginHorizontal: 16 }, { color: COLORS.danger }]}>{errorMessage}</Text>
         </View>
 
     );

@@ -1,4 +1,4 @@
-import { TextInput, View, Text, StyleSheet, KeyboardTypeOptions } from 'react-native';
+import { TextInput, View, Text, StyleSheet, KeyboardTypeOptions, KeyboardAvoidingView, Platform } from 'react-native';
 import React from 'react';
 // import { STYLES } from '@/constants/style';
 // import { COLORS } from '@/constants/theme';
@@ -40,10 +40,10 @@ const TextField: React.FC<Props> = ({
             justifyContent: "center",
             gap: 4
         }}>
-            {label && <Text style={styles.text}>{label}</Text>}
+            {label && <Text style={[styles.text, { paddingHorizontal: 16 }]}>{label}</Text>}
             <View style={[
                 styles.inputWrapper,
-                {flexDirection: "row", alignItems: "center",},
+                { flexDirection: "row", alignItems: "center" },
                 errorMessage && errorMessage != "" &&
                 {
                     borderColor: colors.danger
@@ -58,7 +58,7 @@ const TextField: React.FC<Props> = ({
                     />
                 )}
                 <TextInput
-                    style={{ flex: 1 }}
+                    style={{ width: '100%' }}
                     placeholder={placeholder}
                     placeholderTextColor={colors.gray}
                     secureTextEntry={secureTextEntry}
@@ -68,13 +68,12 @@ const TextField: React.FC<Props> = ({
                     keyboardType={keyboardType}
                 />
             </View>
-            {errorMessage && (<Text style={[
+            <Text style={[
                 styles.text,
                 {
                     color: colors.danger
                 }
             ]}>{errorMessage}</Text>
-            )}
         </View >
     );
 };

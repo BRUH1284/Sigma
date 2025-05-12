@@ -5,6 +5,7 @@ export const registrationSchema = z.object({
     lastName: z.string().min(1, 'Last name is required'),
     bio: z.string().optional(),
     friendsVisible: z.boolean(),
+    age: z.number().min(1, 'Age must be greater than 0'),
     weight: z.number().min(1, 'Weight must be greater than 0'),
     targetWeight: z.number().min(1, 'Target weight must be greater than 0'),
     height: z.number().min(1, 'Height must be greater than 0'),

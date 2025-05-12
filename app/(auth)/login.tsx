@@ -1,4 +1,4 @@
-import { Image, View, Text } from 'react-native'
+import { Image, View, Text, Keyboard, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback } from 'react-native'
 import React, { useState } from 'react'
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from 'expo-router';
@@ -14,12 +14,10 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const { onLogin } = useAuth();
     const { checkRegistration } = useRegistration();
-    const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
     const [usernameMessage, setUsernameMessage] = useState('');
     const [passwordMessage, setPasswordMessage] = useState('');
     const styles = useStyles();
-    const { colors } = useTheme();
 
 
     // Handle the change in username field
@@ -71,43 +69,46 @@ export default function Login() {
     };
 
     return (
-
-        <View style={styles.container}>
-            <Image
-                style={{
-                    alignSelf: "stretch",
-                    height: 256,
-                    margin: 32
-                }}
-                resizeMode="contain"
-                source={{
-                    uri: 'https://i1.sndcdn.com/avatars-IOXJvmseuTNrYtVh-mxzoUg-t240x240.jpg',
-                }}></Image>
-            <Text style={styles.title}>Sign in to Sigma</Text>
-            <TextField
-                placeholder="Username"
-                errorMessage={usernameMessage}
-                autoCapitalize="none"
-                onChangeText={handleUsernameChange}
-                value={username}
-            />
-            <TextField
-                placeholder="Password"
-                errorMessage={passwordMessage}
-                secureTextEntry
-                onChangeText={handlePasswordChange}
-                value={password}
-            />
-            <View style={[styles.container, {
-                height: "auto",
-                alignSelf: "stretch",
-                justifyContent: 'flex-end',
-                marginBottom: 48
-            }]}>
-                <Text style={styles.errorText}>{errorMessage}</Text>
-                <TextButton onPress={login} title="Sign in" />
-            </View>
-        </View>
+        <KeyboardAvoidingView
+            behavior='padding'
+            style={{ flex: 1 }}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <SafeAreaView style={{ flex: 1 }}>
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                        <View style={styles.containerAvoid}>
+                            <Image
+                                style={{
+                                    alignSelf: "stretch",
+                                    height: 256,
+                                    margin: 32
+                                }}
+                                resizeMode="contain"
+                                source={{
+                                    uri: 'https://i1.sndcdn.com/avatars-IOXJvmseuTNrYtVh-mxzoUg-t240x240.jpg',
+                                }}></Image>
+                            <Text style={styles.title}>Sign in to Sigma</Text>
+                            <TextField
+                                placeholder="Username"
+                                errorMessage={usernameMessage}
+                                autoCapitalize="none"
+                                onChangeText={handleUsernameChange}
+                                value={username}
+                            />
+                            <TextField
+                                placeholder="Password"
+                                errorMessage={passwordMessage}
+                                secureTextEntry
+                                onChangeText={handlePasswordChange}
+                                value={password}
+                            />
+                            <View style={{ flex: 1 }} />
+                            <TextButton onPress={login} title="Sign in" />
+                        </View>
+                    </TouchableWithoutFeedback>
+                </SafeAreaView>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 };
 

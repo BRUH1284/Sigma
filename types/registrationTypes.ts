@@ -3,6 +3,7 @@ export interface UserData {
     lastName: string;
     bio: string;
     friendsVisible: boolean;
+    age: number;
     weight: number;
     targetWeight: number;
     height: number;

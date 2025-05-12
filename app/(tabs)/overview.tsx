@@ -1,9 +1,7 @@
 import ActivityRowAdd from '@/components/ActivityRowAdd';
 import ActivityRowSummary from '@/components/ActivityRowSummary';
-import ActivityRow from '@/components/ActivityRowSummary';
 import GoalCard from '@/components/GoalCard';
 import IconButton from '@/components/IconButton';
-import NumberInputField from '@/components/NumberInputField';
 import NumberPopup from '@/components/NumberPopup';
 import SearchPopup from '@/components/SearchPopup';
 import SummaryCard from '@/components/SummaryCard';
@@ -14,25 +12,23 @@ import { useStyles } from '@/constants/style';
 import { ActivityProvider } from '@/context/ActivityContext';
 import { ActivityRecordProvider } from '@/context/ActivityRecordContext';
 import { UserActivityProvider } from '@/context/UserActivityContext';
+import { UserDataProvider } from '@/context/UserDataContext';
 import { Activity, UserActivity } from '@/db/schema';
 import { useActivity } from '@/hooks/useActivity';
 import { useActivityRecord } from '@/hooks/useActivityRecord';
 import { useUserActivity } from '@/hooks/useUserActivity';
+import { useUserData } from '@/hooks/useUserData';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
     Text,
     Animated,
     Dimensions,
-    StyleSheet,
-    Button,
-    TouchableOpacity,
-    ScrollView,
     Modal,
     Pressable
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRecommendations } from '@/hooks/useRecomendations';
 
 
 const data = Array.from({ length: 10 }, (_, i) => ({ id: i.toString(), title: `Item ${i + 1}` }));
@@ -63,19 +59,22 @@ function OverviewContent() {
     const { createRecord, getTodayActivitiesLocal, deleteRecord, syncActivityRecords } = useActivityRecord();
     const { syncActivities, getAllActivities, getActivityByCode } = useActivity();
     const { syncUserActivities, getUserActivityById, getAllUserActivities } = useUserActivity();
-    const [modalVisible, setModalVisible] = useState(false);
     const [activityRecordsData, setActivityRecordsData] = useState<ActivityRecordData[]>([]);
     const [selectedActivity, setSelectedActivity] = useState<AddActivityData | null>(null);
     const [activities, setActivities] = useState<AddActivityData[]>([]);
     const [search, setSearch] = useState("");
-    const [minutes, setMinutes] = useState(0);
+    const [number, setNumber] = useState(0);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const { userData, setWeight, loadData } = useUserData();
+    const [popup, setPopup] = useState<'none' | 'activity' | 'weight'>('none');
     const styles = useStyles();
-    const { colors } = useTheme();
 
+    const recommendations = useRecommendations();
 
     const syncRecords = async () => {
         setIsRefreshing(true);
+
+        loadData();
 
         // Get activities
         await syncUserActivities();
@@ -151,27 +150,27 @@ function OverviewContent() {
     );
 
     const closeModal = () => {
-        setModalVisible(false);
+        setPopup('none');
         setSelectedActivity(null);
         setSearch("");
+        setNumber(0);
     };
 
     const addRecord = async () => {
-        if (minutes < 0)
+        if (number < 0)
             return;
 
         closeModal();
 
         const identificator = selectedActivity!.userActivityId ?? selectedActivity?.activityCode!;
 
-        await createRecord(identificator, minutes, minutes * 100);
+        await createRecord(identificator, number, number * 100);
         await syncRecords();
 
     };
 
     const onDeleteRecord = async (id: string) => {
         try {
-
             await deleteRecord(id);
             await syncRecords();
         } catch (e) {
@@ -179,17 +178,9 @@ function OverviewContent() {
         }
     };
 
-    // const activityRecords = useActivityRecord();
-    // const addActivityRecord = async () => {
-    //     activityRecords.createRecord(1, 30);
-
-    //     console.log(`${(await activityRecords.getUnsyncedActivities())}`);
-    //     console.log(`${(await activityRecords.getTodayActivities()).length}`);
-    // }
-
     const scrollX = useRef(new Animated.Value(0)).current;
     return (
-        <View style={[styles.container]}>
+        <SafeAreaView style={[styles.container, { paddingVertical: 0 }]}>
             <View style={{ height: ITEM_SIZE }}>
                 <Animated.FlatList
                     data={data}
@@ -226,9 +217,9 @@ function OverviewContent() {
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     borderRadius: 10,
-                                    padding: 10, 
-                                    transform: [{ scale }], 
-                                    }}
+                                    padding: 10,
+                                    transform: [{ scale }],
+                                }}
                                 >
                                     <Text style={{
                                         color: '#fff',
@@ -253,18 +244,19 @@ function OverviewContent() {
                 />
                 <GoalCard
                     current='123'
-                    goal='123321'
+                    goal={`${recommendations.rmrCalculator(userData)} kcal`}
                     icon={{
                         name: 'local-fire-department',
                         size: 48,
                         library: 'MaterialIcons',
                     }}
+                    onPress={() => { setPopup('activity') }}
                 />
             </View>
             <View style={{ flexDirection: 'row', width: '100%', height: 80, gap: 16 }}>
                 <GoalCard
                     current='123'
-                    goal='123321'
+                    goal={`${recommendations.waterCalculator(userData)} l`}
                     icon={{
                         name: 'water',
                         size: 48,
@@ -272,19 +264,20 @@ function OverviewContent() {
                     }}
                 />
                 <GoalCard
-                    current='123'
-                    goal='123321'
+                    current={`${userData?.weight} kg`}
+                    goal={`${userData?.targetWeight} kg`}
                     icon={{
                         name: 'weight',
                         size: 48,
                         library: 'MaterialCommunityIcons',
                     }}
+                    onPress={() => { setPopup('weight') }}
                 />
             </View>
             <SummaryCard
                 headerText='Activities'
                 headerKcal={123}
-                onHeaderAddButton={() => { setModalVisible(true) }}
+                onHeaderAddButton={() => { setPopup('activity') }}
                 flatListComponent={ActivityRowSummary}
                 flatListComponentProps={activityRecordsData}
                 onRefresh={syncRecords}
@@ -292,12 +285,12 @@ function OverviewContent() {
             />
             <Modal
                 transparent
-                visible={modalVisible}
+                visible={popup !== 'none'}
                 animationType="fade"
                 onRequestClose={closeModal}
             >
                 <Pressable style={styles.overlay} onPress={closeModal}>
-                    {!selectedActivity && (
+                    {popup === 'activity' && !selectedActivity && (
                         <SearchPopup
                             headerText='Add'
                             onBack={closeModal}
@@ -316,22 +309,37 @@ function OverviewContent() {
                             flatListComponent={ActivityRowAdd}
                         />
                     )}
-                    {selectedActivity && (
+                    {popup === 'activity' && selectedActivity && (
                         <NumberPopup
                             headerText={selectedActivity.name}
                             onBack={() => setSelectedActivity(null)}
                             acceptText={`${selectedActivity.kcal} kcal`}
-                            onAccept={addRecord}
+                            onAccept={(addRecord)}
                             text={selectedActivity.text}
                             placeholder='Minutes'
-                            onChangeNumber={setMinutes}
-                            value={minutes}
+                            onChangeNumber={setNumber}
+                            value={number}
                             minWidth={96}
+                        />
+                    )}
+                    {popup === 'weight' && (
+                        <NumberPopup
+                            headerText='Weight'
+                            onBack={() => closeModal}
+                            onAccept={() => {
+                                setWeight(number);
+                                closeModal();
+                            }}
+                            placeholder='Kg'
+                            onChangeNumber={setNumber}
+                            value={number}
+                            minWidth={96}
+                            minValue={-100000}
                         />
                     )}
                 </Pressable>
             </Modal>
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -340,7 +348,10 @@ export default function Overview() {
         <ActivityRecordProvider>
             <ActivityProvider>
                 <UserActivityProvider>
-                    <OverviewContent />
+                    <UserDataProvider>
+
+                        <OverviewContent />
+                    </UserDataProvider>
                 </UserActivityProvider>
             </ActivityProvider>
         </ActivityRecordProvider>

@@ -17,14 +17,14 @@ export default function IconButton({ icon, onPress, style }: Props) {
 
     return (
         <TouchableOpacity
-            style={{
+            style={[{
                 aspectRatio: 1,
                 borderRadius: 1000,
                 backgroundColor: colors.primary,
                 justifyContent: "center",
                 alignItems: "center",
                 alignSelf: "flex-start",
-            }}
+            }, style]}
             onPress={onPress}
         >
             <DynamicIcon

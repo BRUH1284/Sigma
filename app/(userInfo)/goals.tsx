@@ -53,7 +53,7 @@ export default function PhysicalDetails() {
     return (
         <>
             <Stack.Screen options={{ title: 'Goals' }} />
-            <View style={styles.container}>
+            <View style={[styles.containerAvoid, { alignItems: 'center' }]}>
                 <CircularProgress
                     size={128}
                     strokeWidth={12}
@@ -76,14 +76,8 @@ export default function PhysicalDetails() {
                     onChangeValue={(val) => updateField('goal', val)}
                 />
 
-                <View style={[styles.container, {
-                    height: "auto",
-                    alignSelf: "stretch",
-                    justifyContent: 'flex-end',
-                    marginBottom: 48
-                }]}>
-                    <TextButton onPress={handleNext} title="Continue" />
-                </View>
+                <View style={{ flex: 1 }} />
+                <TextButton onPress={handleNext} title="Continue" />
             </View>
         </>
     );

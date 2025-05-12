@@ -6,8 +6,8 @@ import { useRegistrationStep } from '@/hooks/useRegistrationStep';
 import CircularProgress from '@/components/CircularProgress';
 import { Stack, useRouter } from 'expo-router'
 import { useState } from 'react';
-import { View } from 'react-native'
-// import { COLORS } from '@/constants/theme';
+import { Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native'
+import { COLORS } from '@/constants/theme';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useStyles } from '@/constants/style';
 import { useTheme } from '@/context/ThemeContext';
@@ -46,38 +46,41 @@ export default function Name() {
     return (
         <>
             <Stack.Screen options={{ title: 'Personal Info' }} />
-            <View style={styles.container}>
-                <CircularProgress
-                    size={128}
-                    strokeWidth={12}
-                    rings={[
-                        { color: colors.primary, progress: 0 }
-                    ]}
-                    icons={[
-                        { name: 'person', library: 'MaterialIcons' }
-                    ]}
-                />
-                <TextField
-                    label='First name'
-                    errorMessage={nameError}
-                    onChangeText={(val: any) => updateField('firstName', val)}
-                    value={registrationData.firstName}
-                />
-                <TextField
-                    label='Last name'
-                    errorMessage={lastNameError}
-                    onChangeText={(val: any) => updateField('lastName', val)}
-                    value={registrationData.lastName}
-                />
-                <View style={[styles.container, {
-                    height: "auto",
-                    alignSelf: "stretch",
-                    justifyContent: 'flex-end',
-                    marginBottom: 48
-                }]}>
-                    <TextButton onPress={handleNext} title="Continue" />
-                </View>
-            </View>
+            <KeyboardAvoidingView
+                behavior='padding'
+                style={{ flex: 1 }}
+            >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <SafeAreaView style={{ flex: 1 }}>
+                        <View style={[styles.containerAvoid, { alignItems: 'center' }]}>
+                            <CircularProgress
+                                size={128}
+                                strokeWidth={12}
+                                rings={[
+                                    { color: colors.primary, progress: 0 }
+                                ]}
+                                icons={[
+                                    { name: 'person', library: 'MaterialIcons' }
+                                ]}
+                            />
+                            <TextField
+                                label='First name'
+                                errorMessage={nameError}
+                                onChangeText={(val: any) => updateField('firstName', val)}
+                                value={registrationData.firstName}
+                            />
+                            <TextField
+                                label='Last name'
+                                errorMessage={lastNameError}
+                                onChangeText={(val: any) => updateField('lastName', val)}
+                                value={registrationData.lastName}
+                            />
+                            <View style={{ flex: 1 }} />
+                            <TextButton onPress={handleNext} title="Continue" />
+                        </View>
+                    </SafeAreaView>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         </>
     );
 }

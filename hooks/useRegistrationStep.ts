@@ -5,7 +5,7 @@ export function useRegistrationStep(registrationData: UserData) {
 
     const steps: (keyof UserData)[][] = [
         ['firstName', 'lastName'],
-        ['weight', 'height', 'gender', 'activityLevel'],
+        ['age', 'weight', 'height', 'gender', 'activityLevel'],
         ['userClimate'],
         ['targetWeight', 'goal']
     ];

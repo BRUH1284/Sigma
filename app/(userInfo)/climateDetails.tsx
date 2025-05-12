@@ -40,7 +40,7 @@ export default function ClimateDetails() {
     return (
         <>
             <Stack.Screen options={{ title: 'Environment' }} />
-            <View style={styles.container}>
+            <View style={[styles.containerAvoid, { alignItems: 'center' }]}>
                 <CircularProgress
                     size={128}
                     strokeWidth={12}
@@ -57,15 +57,8 @@ export default function ClimateDetails() {
                     value={registrationData.userClimate}
                     onChangeValue={(val) => updateField('userClimate', val)}
                 />
-
-                <View style={[styles.container, {
-                    height: "auto",
-                    alignSelf: "stretch",
-                    justifyContent: 'flex-end',
-                    marginBottom: 48
-                }]}>
-                    <TextButton onPress={handleNext} title="Continue" />
-                </View>
+                <View style={{ flex: 1 }} />
+                <TextButton onPress={handleNext} title="Continue" />
             </View>
         </>
     );
