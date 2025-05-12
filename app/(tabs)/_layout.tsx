@@ -5,6 +5,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useStyles } from '@/constants/style';
 import { useTheme } from '@/context/ThemeContext';
 import MessengerScreen from '../(messenger)/messenger';
+import { COLORS } from '@/constants/theme';
 
 const isTablet = Dimensions.get('window').width >= 700;
 
@@ -18,7 +19,7 @@ export default function TabLayout() {
                 headerShown: false,
                 tabBarActiveTintColor: colors.onPrimary,
                 tabBarStyle: {
-                    backgroundColor: colors.onBackground,
+                    backgroundColor: "#202020",
                     paddingVertical: 0,
                 },
                 tabBarLabelStyle: {
