@@ -13,6 +13,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useRouter } from 'expo-router';
 import { useMessenger } from '@/hooks/useMessenger';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/context/ThemeContext';
 
 type Chat = {
   username: string;
@@ -27,6 +28,8 @@ export default function MessengerScreen() {
   const { profileLoading } = useProfile();
   const { connectToChatHub, onMessageReceived, stopConnection } = useMessenger();
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
 
   useEffect(() => {
     const load = async () => {
@@ -127,21 +130,22 @@ export default function MessengerScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: any) => StyleSheet.create({
   chatItem: {
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.thirdSurface,
   },
   username: {
     fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 4,
+    color: colors.onPrimary
   },
   message: {
     fontSize: 14,
-    color: '#555',
+    color: colors.gray,
   },
   loadingContainer: {
     flex: 1,
@@ -150,7 +154,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
+    marginTop: 30,
   },
   newMessageButton: {
     backgroundColor: '#007AFF',
