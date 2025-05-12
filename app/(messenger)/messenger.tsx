@@ -44,8 +44,10 @@ export default function MessengerScreen() {
         const data = await getChats();
         setChats(data); // временно без фильтра
 
-        await onMessageReceived((sender, content, time) => {
+        await onMessageReceived(async(sender, content, time) => {
           console.log(`📩 Message from ${sender} at ${time}: ${content}`);
+          const updatedChats = await getChats();
+          setChats(updatedChats);
         });
 
         // onMessageReceived(async () => {
