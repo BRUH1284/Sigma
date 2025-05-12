@@ -24,7 +24,7 @@ export default function TextButton({ title: title, onPress }: Props) {
                 }]}
             onPress={onPress}
         >
-            <Text style={{ color: colors.onPrimary, fontWeight: "bold" }}>
+            <Text style={{ color: colors.onSecondary, fontWeight: "bold" }}>
                 {title}
             </Text>
         </TouchableOpacity>

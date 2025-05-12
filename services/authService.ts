@@ -88,7 +88,7 @@ export const authService = {
         try {
 
             connection = new HubConnectionBuilder()
-                .withUrl(`http://94.228.170.32:5294/chathub`, { // TODO: move to .env
+                .withUrl(`http://192.168.0.25:5294/chathub`, { // TODO: move to .env
                     accessTokenFactory: () => accessToken || '' // если нужно — сюда токен
                 })
                 .withAutomaticReconnect()

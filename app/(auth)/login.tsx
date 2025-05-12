@@ -79,14 +79,13 @@ export default function Login() {
                         <View style={styles.containerAvoid}>
                             <Image
                                 style={{
-                                    alignSelf: "stretch",
+                                    alignSelf: "center",
                                     height: 256,
+                                    width: '100%',
                                     margin: 32
                                 }}
                                 resizeMode="contain"
-                                source={{
-                                    uri: 'https://i1.sndcdn.com/avatars-IOXJvmseuTNrYtVh-mxzoUg-t240x240.jpg',
-                                }}></Image>
+                                source={require('@/assets/images/logo.png')}></Image>
                             <Text style={styles.title}>Sign in to Sigma</Text>
                             <TextField
                                 placeholder="Username"
