@@ -16,7 +16,7 @@ import { MessengerProvider } from "@/context/MessengerContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 
 
-const DATABASE_NAME = process.env.DATABASE_NAME || 'sigma';
+const DATABASE_NAME = 'sigma';
 
 export default function RootLayout() {
   const expoDb = openDatabaseSync(DATABASE_NAME);

@@ -69,10 +69,21 @@ export const AuthProvider = ({ children }: any) => {
             await authService.register(username, email, password);
 
             return { success: true };
-        } catch (e) {
+        } catch (e: any) {
+            let errorDetails: string[] = [];
+
+            // Iterate over all properties of `e` (the error object)
+            for (let key in e) {
+                if (e.hasOwnProperty(key)) {
+                    errorDetails.push(`${key}: ${JSON.stringify(e[key])}`);
+                }
+            }
+            // Join the array into a single string
+            const errorMsg = errorDetails.join('\n');
+
             return {
                 success: false,
-                msg: (e as any).message,
+                msg: errorMsg,
                 data: (e as any).response?.data
             };
         }
