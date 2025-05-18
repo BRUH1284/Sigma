@@ -5,16 +5,44 @@ import { useStyles } from '@/constants/style';
 import { COLORS } from '@/constants/theme';
 import { useTheme } from '@react-navigation/native';
 
+/**
+ * Props pre komponent `DropdownField`.
+ */
 type Props = {
+    /** Popis nad výberovým poľom */
     label?: string;
+    /** Zobrazí sa ako chybová hláška, ak je zadaná */
     errorMessage?: string;
+    /** Položky výberu – zobrazovaný label a hodnota */
     items: { label: string; value: any }[];
+    /** Callback po zmene hodnoty */
     onChangeValue?: (value: any) => void;
+    /** Aktuálna hodnota */
     value?: any;
+    /** Priorita vrstvy (Z-index) pre overlapy */
     zIndex?: number;
+    /** Smer, ktorým sa má dropdown otvoriť */
     dropdownDirection?: DropDownDirectionType;
 };
 
+/**
+ * Komponent pre štýlovaný dropdown (výber zo zoznamu).
+ *
+ * Obaluje `react-native-dropdown-picker` a poskytuje podporu pre:
+ * - label
+ * - chybové hlášky
+ * - správne z-index vrstvenie (napr. pri viacerých dropdownoch)
+ *
+ * @component
+ * @param label - Voliteľný text nad výberom
+ * @param errorMessage - Chyba, ktorá sa zobrazí pod výberom
+ * @param items - Zoznam výberových položiek
+ * @param onChangeValue - Funkcia volaná pri zmene hodnoty
+ * @param value - Počiatočná hodnota
+ * @param zIndex - Z-index komponentu
+ * @param dropdownDirection - Smer rozbalenia výberu
+ * @returns JSX komponent výberového poľa
+ */
 const DropdownField: React.FC<Props> = ({
     label,
     errorMessage = "",

@@ -11,6 +11,20 @@ import CircularProgress from '@/components/CircularProgress';
 import { useStyles } from '@/constants/style';
 import { useTheme } from '@/context/ThemeContext';
 
+/**
+ * Druhý krok registračného formulára – fyzické údaje používateľa.
+ *
+ * Umožňuje zadať:
+ * - vek
+ * - hmotnosť (v kg)
+ * - výšku (v cm)
+ * - pohlavie
+ * - úroveň fyzickej aktivity
+ *
+ * Ak validácia prebehne úspešne, používateľ pokračuje na obrazovku `climateDetails`.
+ *
+ * @returns React komponent registračného kroku „Physical Details“
+ */
 export default function PhysicalDetails() {
     const router = useRouter();
 
@@ -24,6 +38,9 @@ export default function PhysicalDetails() {
     const styles = useStyles();
     const { colors } = useTheme();
 
+    /**
+     * Validuje fyzické údaje a presmeruje používateľa na ďalší krok registrácie.
+     */
     const handleNext = () => {
         const result = validateStep(1);
 
@@ -44,10 +61,17 @@ export default function PhysicalDetails() {
         router.push('/climateDetails');
     };
 
+    /**
+     * Položky pre výber pohlavia.
+     */
     const genderItems = [
         { label: 'Male', value: Gender.Male },
         { label: 'Female', value: Gender.Female },
     ];
+
+    /**
+     * Položky pre výber úrovne aktivity.
+     */
     const activityItems = [
         { label: 'Sedentary', value: ActivityLevel.Sedentary },
         { label: 'Light', value: ActivityLevel.Light },

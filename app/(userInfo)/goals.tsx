@@ -13,6 +13,15 @@ import CircularProgress from '@/components/CircularProgress';
 import { useStyles } from '@/constants/style';
 import { useTheme } from '@/context/ThemeContext';
 
+/**
+ * Obrazovka pre zadanie cieľov používateľa (váha + cieľ).
+ *
+ * Je to posledný krok v procese registrácie. Používateľ zadá cieľovú hmotnosť
+ * a vyberie cieľ (napr. schudnúť, pribrať, udržiavať váhu).
+ * Komponent tiež volá `submitRegistration()` pre odoslanie údajov na server.
+ *
+ * @returns React komponent registračného kroku „Goals“
+ */
 export default function PhysicalDetails() {
     const router = useRouter();
 
@@ -24,6 +33,10 @@ export default function PhysicalDetails() {
     const styles = useStyles();
     const { colors } = useTheme();
 
+    /**
+     * Validuje údaje a volá registráciu.
+     * Ak je úspešná, presmeruje používateľa. V opačnom prípade zobrazí chybu.
+     */
     const handleNext = async () => {
         const result = validateStep(3);
 
@@ -42,6 +55,9 @@ export default function PhysicalDetails() {
         }
     };
 
+    /**
+     * Položky pre výber cieľa používateľa (typ registrácie).
+     */
     const goalItems = [
         { label: 'Gain weight', value: Goal.GainWeight },
         { label: 'Gain weight fast', value: Goal.GainWeightFast },

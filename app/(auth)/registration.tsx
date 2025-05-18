@@ -7,6 +7,16 @@ import TextButton from '@/components/TextButton';
 // import { STYLES } from '@/constants/style';
 import { useStyles } from '@/constants/style';
 
+/**
+ * Komponenta registračnej obrazovky pre nových používateľov.
+ * 
+ * Umožňuje zadať používateľské meno, e-mail a heslo, 
+ * vykoná validáciu vstupov a pokus o registráciu cez `onRegister`.
+ * 
+ * V prípade chyby zobrazí relevantné správy pre každé pole.
+ * 
+ * @returns React komponent pre registráciu používateľa
+ */
 export default function Register() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -19,6 +29,10 @@ export default function Register() {
 
     const styles = useStyles();
 
+    /**
+     * Spracovanie zmeny mena
+     * @param newUsername Nový text pre používateľské meno
+     */
     // Handle the change in username field
     const handleUsernameChange = (newUsername: string) => {
         setUsername(newUsername);
@@ -27,6 +41,10 @@ export default function Register() {
         setErrorMessage('');
     };
 
+    /**
+     * Spracovanie zmeny e-mailu
+     * @param newEmail Nový text pre e-mail
+     */
     // Handle the change in email field
     const handleEmailChange = (newEmail: string) => {
         setEmail(newEmail);
@@ -35,6 +53,10 @@ export default function Register() {
         setErrorMessage('');
     };
 
+    /**
+     * Spracovanie zmeny hesla
+     * @param newPassword Nový text pre heslo
+     */
     // Handle the change in password field
     const handlePasswordChange = (newPassword: string) => {
         setPassword(newPassword);
@@ -43,6 +65,11 @@ export default function Register() {
         setErrorMessage('');
     };
 
+    /**
+     * Pokus o registráciu používateľa.
+     * V prípade úspechu pokračuje na ďalší krok (napr. vyplnenie profilu).
+     * Pri chybe zobrazí špecifické správy pre každé pole alebo všeobecnú chybu.
+     */
     const register = async () => {
         if (!onRegister) {
             alert("Registration service is unavailable.");

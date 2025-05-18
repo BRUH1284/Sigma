@@ -15,12 +15,26 @@ import { useMessenger } from '@/hooks/useMessenger';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/context/ThemeContext';
 
+/**
+ * Reprezentuje jeden chat kontakt s poslednou prijatou alebo odoslanou správou.
+ */
 type Chat = {
+  /** Používateľské meno adresáta alebo kontaktu. */
   username: string;
+  /** Posledná správa z tejto konverzácie. */
   lastMessage: string;
+  /** Dátum a čas poslednej správy. */
   sentAt: string;
 };
 
+/**
+ * Obrazovka pre zobrazenie zoznamu chatov používateľa.
+ *
+ * Umožňuje prejsť do konkrétnej konverzácie alebo spustiť nový chat.
+ * Po načítaní sa prepne z loading state na zoznam alebo správu o prázdnom inboxe.
+ *
+ * @returns React komponent obrazovky pre správu chatov
+ */
 export default function MessengerScreen() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +45,9 @@ export default function MessengerScreen() {
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
+  /**
+   * Načítava konverzácie a nastavuje live listener na nové správy.
+   */
   useEffect(() => {
     const load = async () => {
       try {
@@ -71,7 +88,11 @@ export default function MessengerScreen() {
     };
   }, []);
 
-
+  /**
+   * Render jednej položky zoznamu konverzácií.
+   * @param item - Jeden chat objekt
+   * @returns JSX element so štýlovaným kontaktom
+   */
   const renderItem = ({ item: chat }: { item: Chat }) => (
     <TouchableOpacity
       style={styles.chatItem}
@@ -118,7 +139,7 @@ export default function MessengerScreen() {
         <Text style={styles.newMessageButtonText}>New Message</Text>
       </TouchableOpacity>
       {chats.length === 0 ? (
-        <Text style={styles.emptyText}>Нет чатов</Text>
+        <Text style={styles.emptyText}>No chats</Text>
       ) : (
         <FlatList
           data={chats}
@@ -130,6 +151,12 @@ export default function MessengerScreen() {
   );
 }
 
+/**
+ * Dynamicky generované štýly podľa aktuálnej farebnej schémy témy.
+ *
+ * @param colors - Objekt s farbami z aktuálnej témy
+ * @returns StyleSheet objekt pre komponent
+ */
 const getStyles = (colors: any) => StyleSheet.create({
   chatItem: {
     paddingVertical: 14,

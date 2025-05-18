@@ -16,7 +16,7 @@ export const useStyles = () => {
         },
         containerAvoid: {
             flex: 1,
-            justifyContent: "flex-end",
+            justifyContent: "center",
             padding: 16,
             paddingBottom: 32,
             gap: 16,

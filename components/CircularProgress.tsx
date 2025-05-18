@@ -8,30 +8,64 @@ import Animated, {
 import { useTheme } from '@/context/ThemeContext';
 import DynamicIcon, { IconLibraryName } from './DynamicIcon';
 
+/**
+ * Jeden prstenec (vrstva kruhového progress indikátora).
+ */
 type Ring = {
+    /** Farba aktívneho úseku */
     color: string;
+    /** Farba pozadia kruhu (nevyplnená časť) */
     backgroundColor?: string;
+    /** Progres 0.0 - 1.0 */
     progress: number;
 };
 
+/**
+ * Ikonka umiestnená do stredu progress kruhu.
+ */
 type IconItem = {
+    /** Názov ikony */
     name: string;
+    /** Knižnica, z ktorej sa ikona berie (napr. MaterialIcons) */
     library: IconLibraryName;
+    /** Voliteľná farba ikony */
     color?: string;
 };
 
-
+/**
+ * Props pre komponent `CircularProgress`.
+ */
 type Props = {
-    size: number
-    strokeWidth: number,
-    fill?: string,
+    /** Veľkosť kruhu v pixeloch */
+    size: number;
+    /** Hrúbka jednotlivých kruhov */
+    strokeWidth: number;
+    /** Výplň stredu kruhu */
+    fill?: string;
+    /** Pole kruhových prstencov */
     rings: Ring[];
+    /** Voliteľná veľkosť ikon */
     iconSize?: number;
+    /** Ikonky v strede kruhu */
     icons?: IconItem[];
 };
 
+// Animovaný SVG kruh
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
+/**
+ * Komponent `CircularProgress` zobrazuje kruhový progress indikátor s podporou viacerých vrstiev (prstencov)
+ * a voliteľnými ikonkami v strede.
+ *
+ * Používa SVG a podporuje animácie cez `react-native-reanimated`.
+ *
+ * @component
+ * @param size - Veľkosť SVG plátna
+ * @param strokeWidth - Hrúbka kruhu
+ * @param rings - Zoznam prstencov s progresmi
+ * @param icons - Ikony, ktoré sa vykreslia do stredu
+ * @returns JSX komponent zobrazujúci kruhový progress
+ */
 const CircularProgress: React.FC<Props> = ({
     size,
     strokeWidth,

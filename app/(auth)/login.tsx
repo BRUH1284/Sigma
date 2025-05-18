@@ -9,6 +9,14 @@ import { useTheme } from '@/context/ThemeContext';
 import TextField from '@/components/TextField';
 import { useRegistration } from '@/hooks/useRegistration';
 
+/**
+ * Komponenta prihlasovacej obrazovky pre používateľov.
+ *
+ * Umožňuje zadať meno a heslo, overiť údaje a prihlásiť sa do aplikácie Sigma.
+ * Obsahuje spracovanie chýb, prácu s klávesnicou a napojenie na autentifikačný servis.
+ *
+ * @returns React komponenta pre prihlásenie
+ */
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -18,8 +26,12 @@ export default function Login() {
     const [usernameMessage, setUsernameMessage] = useState('');
     const [passwordMessage, setPasswordMessage] = useState('');
     const styles = useStyles();
+    const router = useRouter();
 
-
+    /**
+     * Spracovanie zmeny používateľského mena
+     * @param newUsername Nový text z inputu
+     */
     // Handle the change in username field
     const handleUsernameChange = (newUsername: string) => {
         setUsername(newUsername);
@@ -28,6 +40,10 @@ export default function Login() {
         setErrorMessage('');
     };
 
+    /**
+     * Spracovanie zmeny hesla
+     * @param newPassword Nové heslo z inputu
+     */
     // Handle the change in password field
     const handlePasswordChange = (newPassword: string) => {
         setPassword(newPassword);
@@ -36,6 +52,10 @@ export default function Login() {
         setErrorMessage('');
     };
 
+    /**
+     * Pokus o prihlásenie používateľa cez `onLogin`
+     * Vyhodnocuje výsledok a zobrazuje chybové správy podľa typu chyby.
+     */
     // Handle login process
     const login = async () => {
         // Check if authentication service is available
@@ -46,6 +66,7 @@ export default function Login() {
 
         // Attempt to login with provided credentials
         const result = await onLogin(username, password);
+        console.log(result);
 
         // Handle login result
         if (result.success) {

@@ -8,6 +8,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Pedometer } from 'expo-sensors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+/**
+ * Hlavná obrazovka aplikácie Sigma.
+ * 
+ * Zobrazuje:
+ * - horný panel s názvom a ikonou chatu
+ * - krokovač (step tracker) využívajúci senzor pohybu
+ * 
+ * Údaje o krokoch sú ukladané do AsyncStorage a aktualizované v reálnom čase.
+ * 
+ * @returns React Native komponent pre domácu obrazovku
+ */
 export default function Index() {
   const router = useRouter();
   const { colors } = useTheme();
@@ -15,6 +26,12 @@ export default function Index() {
   const [steps, setSteps] = useState(0);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
 
+  /**
+   * Po spustení:
+   * - zisťuje, či je dostupný krokový senzor
+   * - sleduje počet krokov
+   * - obnovuje poslednú hodnotu zo storage
+   */
   useEffect(() => {
     Pedometer.isAvailableAsync().then(setIsAvailable);
 

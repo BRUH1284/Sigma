@@ -38,14 +38,25 @@ const SIDE_PADDING = (SCREEN_WIDTH - ITEM_SIZE) / 2;
 const TOTAL_DAYS = 30;
 const START_INDEX = TOTAL_DAYS / 2;
 
+/**
+ * Typ reprezentujúci existujúcu záznamovú aktivitu z dňa.
+ */
 type ActivityRecordData = {
+    /** ID záznamu */
     id: string,
+    /** Popis aktivity */
     text: string,
+    /** Trvanie aktivity v minútach */
     minutes: number,
+    /** Spálené kalórie */
     kcal: number,
+    /** Callback pre zmazanie záznamu */
     onDelete: () => void
 };
 
+/**
+ * Typ reprezentujúci aktivitu, ktorú je možné pridať.
+ */
 type AddActivityData = {
     id?: number,
     name: string,
@@ -56,6 +67,12 @@ type AddActivityData = {
     onAdd?: () => void,
 }
 
+/**
+ * Vnútorný komponent, ktorý zobrazuje prehľad používateľských cieľov, aktivity a denný pokrok.
+ * Obsahuje logiku synchronizácie, filtrovania, výpočtov a zobrazovania záznamov.
+ *
+ * @returns React komponent s prehľadom aktivít a cieľov
+ */
 function OverviewContent() {
     const { createRecord, getDayActivitiesLocal, getTodayActivitiesLocal, deleteRecord, syncActivityRecords } = useActivityRecord();
     const { syncActivities, getAllActivities, getActivityByCode } = useActivity();
@@ -75,6 +92,9 @@ function OverviewContent() {
 
     const recommendations = useRecommendations();
 
+    /**
+   * Synchronizuje všetky dáta: používateľské aktivity, systémové aktivity, záznamy a progress.
+   */
     const syncRecords = async () => {
         setIsRefreshing(true);
 
@@ -171,6 +191,9 @@ function OverviewContent() {
         activity.text!.toLowerCase().includes(search.toLowerCase())
     );
 
+    /**
+   * Zatvorí aktuálne modálne okno.
+   */
     const closeModal = () => {
         setPopup('none');
         setSelectedActivity(null);
@@ -178,6 +201,9 @@ function OverviewContent() {
         setNumber(0);
     };
 
+    /**
+   * Pridá nový záznam aktivity na základe aktuálne vybranej aktivity a počtu minút.
+   */
     const addRecord = async () => {
         if (number < 0)
             return;
@@ -191,6 +217,10 @@ function OverviewContent() {
 
     };
 
+    /**
+   * Vymaže záznam podľa ID a obnoví stav.
+   * @param id - ID záznamu na odstránenie
+   */
     const onDeleteRecord = async (id: string) => {
         try {
             await deleteRecord(id);
@@ -200,6 +230,12 @@ function OverviewContent() {
         }
     };
 
+    /**
+   * Získa UNIX čas začiatku dňa, posunutého o určitý index.
+   * @param index Index dňa (relatívny)
+   * @param startIndex Počiatočný index
+   * @returns UNIX timestamp začiatku dňa
+   */
     function getStartOfDayUnix(index: number, startIndex: number) {
         const today = new Date();
         const offsetDays = index - startIndex;
@@ -211,6 +247,11 @@ function OverviewContent() {
         return Math.floor(shiftedDate.getTime() / 1000);
     }
 
+    /**
+   * Získa počet spálených kalórií za deň podľa začiatku dňa.
+   * @param startOfDay UNIX timestamp začiatku dňa
+   * @returns Celkové kalórie za daný deň
+   */
     const getDateProgress = async (startOfDay: number) => {
         const dayActivityRecords = await getDayActivitiesLocal(startOfDay);
 
@@ -399,6 +440,13 @@ function OverviewContent() {
     );
 }
 
+
+/**
+ * Wrapper komponent, ktorý poskytuje potrebné kontexty (Activity, UserData, UserActivity, Record).
+ * Obaluje `OverviewContent`.
+ *
+ * @returns Základný React komponent obrazovky „Overview“
+ */
 export default function Overview() {
     return (
         <ActivityRecordProvider>

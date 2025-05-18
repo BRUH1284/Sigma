@@ -25,14 +25,31 @@ import { useMessenger } from '@/hooks/useMessenger';
 import { getConversation, sendMessage } from '@/services/messageService';
 import { useTheme } from '@/context/ThemeContext';
 
+/**
+ * Typ reprezentujúci správu v konverzácii.
+ */
 type Message = {
+  /** Unikátne ID správy */
   id: string;
+  /** Používateľ, ktorý správu poslal */
   senderUsername: string;
+  /** Používateľ, ktorý správu prijal */
   receiverUsername: string;
+  /** Obsah správy */
   content: string;
+  /** Čas odoslania správy */
   sentAt: string;
 };
 
+/**
+ * Obrazovka pre chat s konkrétnym používateľom.
+ * 
+ * Načítava predchádzajúce správy, zobrazuje ich a umožňuje odosielanie nových.
+ * Používa parametre z adresy (`username`) a komunikuje s `messageService`.
+ * Obsahuje aj živé aktualizácie cez `useMessenger()`.
+ * 
+ * @returns Komponenta chatovacej obrazovky
+ */
 export default function ChatScreen() {
   const { username } = useLocalSearchParams();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -42,6 +59,9 @@ export default function ChatScreen() {
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
+  /**
+   * Načítanie existujúcich správ a nastavenie odberu na nové správy.
+   */
   useEffect(() => {
     const loadMessages = async () => {
       try {
@@ -61,15 +81,15 @@ export default function ChatScreen() {
 
     loadMessages();
 
-    // Подписка на новые сообщения в реальном времени
+    // Živý odber na nové správy
     onMessageReceived(async (sender, content, time) => {
       if (sender === username) {
         setMessages((prev) => [
           ...prev,
           {
-            id: Math.random().toString(), // Замените на реальный ID от сервера
+            id: Math.random().toString(), 
             senderUsername: sender,
-            receiverUsername: '', // Заполните текущим пользователем, если нужно
+            receiverUsername: '', 
             content,
             sentAt: time,
           },
@@ -78,6 +98,10 @@ export default function ChatScreen() {
     });
   }, [username, onMessageReceived]);
 
+  /**
+   * Funkcia pre odoslanie správy.
+   * Po odoslaní obnoví konverzáciu.
+   */
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !username) return;
 
@@ -95,6 +119,11 @@ export default function ChatScreen() {
     }
   };
 
+  /**
+   * Render jednej správy v zozname.
+   * @param item Správa
+   * @returns JSX element reprezentujúci správu
+   */
   const renderMessage = ({ item }: { item: Message }) => (
     <View
       style={[
@@ -126,10 +155,10 @@ export default function ChatScreen() {
             style={styles.input}
             value={newMessage}
             onChangeText={setNewMessage}
-            placeholder="Введите сообщение..."
+            placeholder="Your message..."
           />
           <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
-            <Text style={styles.sendButtonText}>Отправить</Text>
+            <Text style={styles.sendButtonText}>Send</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -149,16 +178,21 @@ export default function ChatScreen() {
           style={styles.input}
           value={newMessage}
           onChangeText={setNewMessage}
-          placeholder="Введите сообщение..."
+          placeholder="Your message..."
         />
         <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
-          <Text style={styles.sendButtonText}>Отправить</Text>
+          <Text style={styles.sendButtonText}>Send</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
+/**
+ * Dynamický štýlovací objekt závislý od aktuálnej témy.
+ * @param colors Farby z témy
+ * @returns StyleSheet objekt
+ */
 const getStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,

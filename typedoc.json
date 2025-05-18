@@ -1,0 +1,12 @@
+{
+  "entryPoints": ["app", "components", "services", "hooks", "types"],
+  "entryPointStrategy": "expand",
+  "out": "docs",
+  "tsconfig": "tsconfig.json",
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeExternals": true,
+  "theme": "default",
+  "name": "SigmaApp Documentation",
+  "readme": "none"
+}

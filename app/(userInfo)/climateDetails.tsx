@@ -11,12 +11,23 @@ import TextButton from '@/components/TextButton';
 import CircularProgress from '@/components/CircularProgress';
 // import { COLORS } from '@/constants/theme';
 
+/**
+ * Obrazovka registrácie používateľa — výber klimatického pásma.
+ *
+ * Tento krok zhromažďuje informácie o prostredí, v ktorom používateľ žije.
+ * Podporuje výber z klimatických možností pomocou `DropdownField` a validáciu kroku.
+ *
+ * @returns React komponent registračného kroku „Environment“
+ */
 export default function ClimateDetails() {
     const router = useRouter();
 
     const { registrationData, updateField } = useRegistration();
     const { validateStep } = useRegistrationStep(registrationData);
 
+    /**
+     * Skontroluje, či je krok validný a presunie používateľa na ďalší krok registrácie.
+     */
     const handleNext = () => {
         const result = validateStep(2);
 
@@ -27,6 +38,9 @@ export default function ClimateDetails() {
         router.push('/goals');
     };
 
+    /**
+     * Položky pre výber klímy.
+     */
     const climateItems = [
         { label: 'Tropical', value: UserClimate.Tropical },
         { label: 'Temperate', value: UserClimate.Temperate },

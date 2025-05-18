@@ -7,8 +7,21 @@ import { useTheme } from '@/context/ThemeContext';
 import MessengerScreen from '../(messenger)/messenger';
 import { COLORS } from '@/constants/theme';
 
+/**
+ * Určuje, či sa aplikácia zobrazuje na tablete podľa šírky obrazovky.
+ */
 const isTablet = Dimensions.get('window').width >= 700;
 
+/**
+ * Komponenta definujúca layout pre navigáciu pomocou tabov.
+ *
+ * - Na telefónoch zobrazuje štandardnú spodnú tab navigáciu.
+ * - Na tabletoch rozdeľuje obrazovku na dve časti: Messenger + obsah tabov.
+ *
+ * Obsahuje ikony pomocou MaterialIcons a používa tému pre farby a štýly.
+ *
+ * @returns React komponent s tabuľkovým navigačným layoutom
+ */
 export default function TabLayout() {
     const styles = useStyles();
     const { colors } = useTheme();
@@ -57,7 +70,9 @@ export default function TabLayout() {
         </Tabs>
     );
 
-    // 👉 если планшет — оборачиваем в два столбца
+    /**
+     * Ak je zariadenie tablet, rozloží layout do dvoch stĺpcov.
+     */
     if (isTablet) {
         return (
             <View style={tabletStyles.container}>
@@ -74,6 +89,9 @@ export default function TabLayout() {
     return tabs;
 }
 
+/**
+ * Štýly pre zobrazenie layoutu na tablete.
+ */
 const tabletStyles = StyleSheet.create({
     container: {
         flex: 1,

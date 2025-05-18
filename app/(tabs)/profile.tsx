@@ -16,6 +16,19 @@ import * as FileSystem from 'expo-file-system';
 import PostCreationCard from '@/components/PostCreationCard';
 // import { COLORS } from '@/constants/theme';
 
+/**
+ * Komponent zobrazenia vlastného používateľského profilu.
+ * 
+ * Obsahuje:
+ * - osobné údaje (meno, profilový obrázok, počty followerov/priateľov)
+ * - možnosť odhlásenia a prepnutia témy
+ * - tvorbu nových postov
+ * - zoznam existujúcich príspevkov
+ *
+ * Používa React hooky, kontexty a podporuje „pull to refresh“.
+ * 
+ * @returns React komponent profilu
+ */
 function MyProfileContent() {
     const { profile, posts, profileLoading, postsLoading, error, fetchMyProfile, fetchMyPosts, addNewPost } = useProfile();
     const { onLogout } = useAuth();
@@ -27,6 +40,9 @@ function MyProfileContent() {
     const styles = useStyles();
     const { colors, toggleTheme, isDark } = useTheme();
 
+    /**
+     * Odhlási používateľa a revaliduje registráciu.
+     */
     const logout = async () => {
         if (!onLogout) {
             alert("Logout service is unavailable.");
@@ -36,6 +52,9 @@ function MyProfileContent() {
         await checkRegistration();
     };
 
+    /**
+     * Obnoví profilové údaje a príspevky (používa sa pri ťahaní nadol).
+     */
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         await fetchMyProfile();
@@ -45,6 +64,12 @@ function MyProfileContent() {
         setRefreshing(false);
     }, [fetchMyProfile]);
 
+    /**
+     * Vytvorí nový post a pokúsi sa ho pridať aj s prípadnou polohou.
+     * @param content Text obsahu postu
+     * @param images Pole obrázkov
+     * @param location Geolokácia postu
+     */
     const addPost = async (content: string, images: any[], location: { latitude: number; longitude: number } | null) => {
         try {
             await addNewPost(`${content}\n${!location?.latitude ? '' : `created at: ${location?.latitude} ${location?.longitude}`}`, images);
@@ -175,6 +200,11 @@ function MyProfileContent() {
     );
 }
 
+/**
+ * Hlavný wrapper komponent, ktorý poskytuje `UserDataContext` a renderuje `MyProfileContent`.
+ *
+ * @returns Komponent profilovej obrazovky s dátovým kontextom
+ */
 export default function MyProfile() {
     return (
         <UserDataProvider>

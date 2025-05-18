@@ -4,6 +4,7 @@ import { api } from '@/api/api';
 import { AxiosError } from 'axios';
 import signalR, { HubConnectionBuilder } from '@microsoft/signalr';
 import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
 
 const ACCESS_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_ACCESS_TOKEN_KEY!;
 const REFRESH_TOKEN_KEY = process.env.EXPO_PUBLIC_SECURE_REFRESH_TOKEN_KEY!;
@@ -27,13 +28,24 @@ const notifyTokenUpdate = () => {
 };
 
 // Initialize device ID
+// const initDeviceId = async (): Promise<void> => {
+//     deviceId =
+//         (await Application.getAndroidId?.()) ||
+//         (await Application.getIosIdForVendorAsync()) ||
+//         'UNKNOWN_DEVICE_ID';
+// };
+// initDeviceId();
 const initDeviceId = async (): Promise<void> => {
-    deviceId =
-        (await Application.getAndroidId?.()) ||
-        (await Application.getIosIdForVendorAsync()) ||
-        'UNKNOWN_DEVICE_ID';
+    if (Platform.OS === 'android') {
+        deviceId = await Application.getAndroidId() ?? 'UNKNOWN_ANDROID_ID';
+    } else if (Platform.OS === 'ios') {
+        deviceId = await Application.getIosIdForVendorAsync() ?? 'UNKNOWN_IOS_ID';
+    } else {
+        deviceId = 'UNKNOWN_PLATFORM';
+    }
+
+    console.log('📱 deviceId:', deviceId);
 };
-initDeviceId();
 
 // Set in-memory tokens and attach to axios
 const setTokens = (newAccess: string | null, newRefresh: string | null) => {
@@ -109,7 +121,9 @@ export const authService = {
     },
 
     async register(username: string, email: string, password: string) {
-
+        if (!deviceId) {
+        await initDeviceId(); // 👈 гарантируем, что не будет пустым
+        }
         const response = await api.post('/auth/register', {
             username,
             email,
@@ -125,6 +139,9 @@ export const authService = {
     },
 
     async login(username: string, password: string) {
+        if (!deviceId) {
+        await initDeviceId(); // 👈 гарантируем, что не будет пустым
+        }
         const response = await api.post('/auth/login', {
             username,
             password,

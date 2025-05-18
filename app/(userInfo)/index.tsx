@@ -12,6 +12,16 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useStyles } from '@/constants/style';
 import { useTheme } from '@/context/ThemeContext';
 
+/**
+ * Prvý krok registračného formulára – zadanie mena a priezviska používateľa.
+ *
+ * Komponent využíva validáciu pomocou `useRegistrationStep`, a ak sú vstupy validné, 
+ * pokračuje na nasledujúci krok (`/physicalDetails`).
+ *
+ * Obsahuje indikátor pokroku (`CircularProgress`), textové polia (`TextField`) a tlačidlo pokračovania.
+ *
+ * @returns React komponent pre registráciu používateľa (meno/priezvisko)
+ */
 export default function Name() {
     const router = useRouter();
 
@@ -24,7 +34,9 @@ export default function Name() {
     const styles = useStyles();
     const { colors } = useTheme();
 
-
+    /**
+     * Skontroluje, či sú mená validné, a ak áno, presunie používateľa ďalej.
+     */
     const handleNext = () => {
         const result = validateStep(0);
 
